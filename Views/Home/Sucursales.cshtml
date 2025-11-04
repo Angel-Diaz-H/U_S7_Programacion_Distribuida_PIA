@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Sucursales";
+}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <img src="https://static.wixstatic.com/media/d606f3_59850432cfdd4507a547397bbd1b1e5d~mv2.png" alt="SuperSalads" height="29">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item"><a class="nav-link" href="#">Rewards</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Nosotros</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Sucursales">Sucursales</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
+                <li class="nav-item ms-lg-3">
+                    <a href="#" class="btn btn-order">ORDENAR AHORA ></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="sucursales py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-success">SUCURSALES</h2>
+        </div>
+    </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!--Nuevo leon-->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/nl.jpg" alt="Nuevo León">
+                <h5 class="text-success fw-semibold mt-3">Nuevo León</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+
+            <!-- Jalisco -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/jalisco.jpg" alt="Jalisco">
+                <h5 class="text-success fw-semibold mt-3">Jalisco</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Chihuahua -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/chihuahua.jpg" alt="Chihuahua">
+                <h5 class="text-success fw-semibold mt-3">Chihuahua</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Coahuila -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/coahuila.jpg" alt="Coahuila">
+                <h5 class="text-success fw-semibold mt-3">Coahuila</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Querétaro -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/queretaro.jpg" alt="Querétaro">
+                <h5 class="text-success fw-semibold mt-3">Querétaro</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Tamaulipas -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/tamaulipas.jpg" alt="Tamaulipas">
+                <h5 class="text-success fw-semibold mt-3">Tamaulipas</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Baja California -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/bc.jpg" alt="Baja California">
+                <h5 class="text-success fw-semibold mt-3">Baja California</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Veracruz -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/veracruz.jpg" alt="Veracruz">
+                <h5 class="text-success fw-semibold mt-3">Veracruz</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+        </div>
+
+            <!-- Quintana Roo -->
+        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+                <img src="~/images/qr.jpg" alt="Quintana Roo">
+                <h5 class="text-success fw-semibold mt-3">Quintana Roo</h5>
+                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+            </div>
+        </div>
+        </section>
+        
+
+        <footer class="footer">
+            <div class="container text-center">
+                <div class="row justify-content-center align-items-start footer-links">
+                    <div class="col-6 col-md-2 mb-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Descarga la App</a></li>
+                            <li><a href="#">Facturación</a></li>
+                            <li><a href="#">Legales Promociones</a></li>
+                            <li><a href="#">Gift Cards</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Aviso de Privacidad</a></li>
+                            <li><a href="#">Rewards</a></li>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Franquicias</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Únete al Equipo</a></li>
+                            <li><a href="#">Tu Evento</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
+                        <img src="~/images/footer.png" alt="Super Salads" class="footer-icon">
+                    </div>
+                </div>
+
+                <hr class="footer-divider" />
+
+                <div class="footer-bottom text-center">
+                    <p>Derechos reservados Super Salads Sa de Cv 2025</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
