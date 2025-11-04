@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evidencia 1 SS", "Evidencia 1 SS.csproj", "{E8438F5B-B7D0-4E24-8C2A-0388CB75F5EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PIA_Programacion_Distribuida", "PIA_Programacion_Distribuida.csproj", "{E8438F5B-B7D0-4E24-8C2A-0388CB75F5EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
