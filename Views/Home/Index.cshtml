@@ -1,12 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Super Salads";
-}
-
-<!-- NAVBAR -->
+﻿<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
     <div class="container">
         <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-             <img src="https://static.wixstatic.com/media/d606f3_59850432cfdd4507a547397bbd1b1e5d~mv2.png" alt="SuperSalads" height="29">
+             <img src="~/images/Logo1.png" alt="SuperSalads" height="49">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -14,12 +10,12 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#">Rewards</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Nosotros</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Sucursales">Sucursales</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>
+                @*<li class="nav-item"><a class="nav-link" href="#">Rewards</a></li>*@
+                @*<li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>*@
                 <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
-                <li class="nav-item ms-lg-3"><a class="btn btn-order" asp-controller="Home" asp-action="IniciarSesion">INICIAR SESION</a></li>
+                <li class="nav-item ms-lg-3"><a class="btn btn-order" asp-controller="Home" asp-action="IniciarSesion">Iniciar sesión</a></li>
             </ul>
         </div>
     </div>
