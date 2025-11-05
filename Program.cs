@@ -16,12 +16,12 @@ if (!app.Environment.IsDevelopment())
 // HTTPS redirection may warn if no HTTPS port is configured when running from bin; leave enabled when running from project/publish
 app.UseHttpsRedirection();
 
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();
-
-// Serve static files from wwwroot
-app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",
