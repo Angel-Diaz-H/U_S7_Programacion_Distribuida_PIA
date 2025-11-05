@@ -54,5 +54,11 @@ namespace TuProyecto.Controllers
         {
             return View();
         }
+
+        // Acción para la vista Reto (Healthy Challenge)
+        public IActionResult Reto()
+        {
+            return View();
+        }
     }
 }
