@@ -1,8 +1,14 @@
 :root{--green:#0f574c;--dark:#064a3b;--muted:#6b6b6b}
 
-.sucursales{background:#fff;padding-top:60px;padding-bottom:80px}
+.sucursales-hero-img{height:220px;object-fit:cover;object-position:center}
+
+.sucursales{background:#fff;padding-top:30px;padding-bottom:80px}
 .sucursales h2{color:var(--green);font-size:2.6rem}
-.sucursales img{width:220px;height:220px;object-fit:cover;border-radius:8px}
+
+.state-card{position:relative;padding:20px;border-radius:12px}
+.state-banner{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:140px;height:36px;overflow:hidden;border-radius:8px}
+.state-banner img{width:100%;height:100%;object-fit:cover;filter:brightness(0.85)}
+.state-map{width:220px;height:220px;object-fit:cover;border-radius:8px;background:#000;padding:10px}
 
 /* Modal styles */
 #branchesModal .modal-header{background:var(--green);color:#fff}
@@ -10,4 +16,8 @@
 #branchesModal .list-group-item.active{background:var(--dark);border-color:var(--dark);color:#fff}
 #branchesModal .card{border:0}
 
-@media(max-width:767px){.sucursales img{width:160px;height:160px}}
+@media(max-width:767px){
+    .sucursales-hero-img{height:140px}
+    .state-map{width:160px;height:160px}
+    .state-banner{display:none}
+}
