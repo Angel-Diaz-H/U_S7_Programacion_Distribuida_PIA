@@ -1,74 +1,221 @@
-﻿<section class="sucursales py-5">
+﻿@{
+    ViewData["Title"] = "Sucursales";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sucursales.css" asp-append-version="true" />
+}
+
+<section class="sucursales py-5">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="fw-bold text-success">SUCURSALES</h2>
         </div>
     </div>
 
+    <div class="container">
         <div class="row g-4 justify-content-center">
 
             <!--Nuevo leon-->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/nl.jpg" alt="Nuevo León">
                 <h5 class="text-success fw-semibold mt-3">Nuevo León</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
-
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="nuevoleon">VER SUCURSALES</button>
+            </div>
 
             <!-- Jalisco -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/jalisco.jpg" alt="Jalisco">
                 <h5 class="text-success fw-semibold mt-3">Jalisco</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="jalisco">VER SUCURSALES</button>
+            </div>
 
             <!-- Chihuahua -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/chihuahua.jpg" alt="Chihuahua">
                 <h5 class="text-success fw-semibold mt-3">Chihuahua</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="chihuahua">VER SUCURSALES</button>
+            </div>
 
             <!-- Coahuila -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/coahuila.jpg" alt="Coahuila">
                 <h5 class="text-success fw-semibold mt-3">Coahuila</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="coahuila">VER SUCURSALES</button>
+            </div>
 
             <!-- Querétaro -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/queretaro.jpg" alt="Querétaro">
                 <h5 class="text-success fw-semibold mt-3">Querétaro</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="queretaro">VER SUCURSALES</button>
+            </div>
 
             <!-- Tamaulipas -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/tamaulipas.jpg" alt="Tamaulipas">
                 <h5 class="text-success fw-semibold mt-3">Tamaulipas</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="tamaulipas">VER SUCURSALES</button>
+            </div>
 
             <!-- Baja California -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/bc.jpg" alt="Baja California">
                 <h5 class="text-success fw-semibold mt-3">Baja California</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="bajacalifornia">VER SUCURSALES</button>
+            </div>
 
             <!-- Veracruz -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/veracruz.jpg" alt="Veracruz">
                 <h5 class="text-success fw-semibold mt-3">Veracruz</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
-        </div>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="veracruz">VER SUCURSALES</button>
+            </div>
 
             <!-- Quintana Roo -->
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-5">
                 <img src="~/images/qr.jpg" alt="Quintana Roo">
                 <h5 class="text-success fw-semibold mt-3">Quintana Roo</h5>
-                <a class="btn btn-outline-success mt-2">VER SUCURSALES</a>
+                <button class="btn btn-outline-success mt-2 btn-view-branches" data-state="quintanaroo">VER SUCURSALES</button>
             </div>
         </div>
-        </section>
+    </div>
+</section>
+
+<!-- Modal: listado de sucursales -->
+<div class="modal fade" id="branchesModal" tabindex="-1" aria-labelledby="branchesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="branchesModalLabel">Sucursales</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5 border-end">
+                        <div id="branchList" class="list-group list-group-flush">
+                            <!-- items dinámicos -->
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div id="branchDetails">
+                            <h4 id="branchName">Selecciona una sucursal</h4>
+                            <p id="branchAddress" class="mb-1 text-muted"></p>
+                            <p id="branchHours" class="mb-1"></p>
+                            <p id="branchPhone" class="mb-1"></p>
+                            <a id="branchMapLink" href="#" target="_blank" class="btn btn-outline-success btn-sm mt-3">Ver en mapa</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Datos inventados de sucursales por estado (más sucursales añadidas)
+        const branchesData = {
+            nuevoleon: [
+                { id: 1, name: "Bowlly's San Pedro", address: "Av. Vasconcelos 123, San Pedro Garza García, NL", hours: "Lun-Dom 9:00 - 22:00", phone: "(81) 1234 5678", map: "https://maps.google.com?q=Av.+Vasconcelos+123+San+Pedro" },
+                { id: 2, name: "Bowlly's Monterrey Centro", address: "Calle Morelos 45, Monterrey, NL", hours: "Lun-Sab 8:00 - 21:00", phone: "(81) 8765 4321", map: "https://maps.google.com?q=Calle+Morelos+45+Monterrey" },
+                { id: 11, name: "Bowlly's Valle Oriente", address: "Blvd. Antonio L. Rodríguez 600, Monterrey, NL", hours: "Lun-Dom 8:00 - 22:00", phone: "(81) 3344 5566", map: "https://maps.google.com?q=Blvd.+Antonio+L+Rodriguez+600+Monterrey" }
+            ],
+            jalisco: [
+                { id: 3, name: "Bowlly's Zapopan", address: "Av. Patria 2000, Zapopan, JAL", hours: "Lun-Dom 10:00 - 22:00", phone: "(33) 1234 5678", map: "https://maps.google.com?q=Av.+Patria+2000+Zapopan" },
+                { id: 12, name: "Bowlly's Guadalajara Centro", address: "Av. Juárez 210, Guadalajara, JAL", hours: "Lun-Sab 9:00 - 21:00", phone: "(33) 8765 4321", map: "https://maps.google.com?q=Av.+Juarez+210+Guadalajara" }
+            ],
+            chihuahua: [
+                { id: 4, name: "Bowlly's Chihuahua Centro", address: "Calle 5 de Mayo 150, Chihuahua, CHH", hours: "Lun-Vie 9:00 - 20:00, Sab-Dom 9:00 - 18:00", phone: "(614) 234 5678", map: "https://maps.google.com?q=Calle+5+de+Mayo+150+Chihuahua" },
+                { id: 13, name: "Bowlly's Norte", address: "Av. Universidad 1200, Chihuahua, CHH", hours: "Lun-Dom 8:30 - 21:30", phone: "(614) 9988 7766", map: "https://maps.google.com?q=Av.+Universidad+1200+Chihuahua" }
+            ],
+            coahuila: [
+                { id: 5, name: "Bowlly's Saltillo Centro", address: "Blvd. Nazario Ortiz Garza 300, Saltillo, COA", hours: "Lun-Dom 9:00 - 21:00", phone: "(844) 123 4567", map: "https://maps.google.com?q=Blvd.+Nazario+Ortiz+Garza+300+Saltillo" },
+                { id: 14, name: "Bowlly's Ramos Arizpe", address: "Av. Hidalgo 50, Ramos Arizpe, COA", hours: "Lun-Vie 9:00 - 20:00", phone: "(844) 556 7788", map: "https://maps.google.com?q=Av.+Hidalgo+50+Ramos+Arizpe" }
+            ],
+            queretaro: [
+                { id: 6, name: "Bowlly's Querétaro Centro", address: "Av. Universidad 120, Querétaro, QRO", hours: "Lun-Dom 8:30 - 20:30", phone: "(442) 123 4567", map: "https://maps.google.com?q=Av.+Universidad+120+Queretaro" },
+                { id: 15, name: "Bowlly's Juriquilla", address: "Av. Paseo de la República 77, Juriquilla, QRO", hours: "Lun-Dom 9:00 - 22:00", phone: "(442) 998 7766", map: "https://maps.google.com?q=Av.+Paseo+de+la+Republica+77+Juriquilla" }
+            ],
+            tamaulipas: [
+                { id: 7, name: "Bowlly's Tampico", address: "Av. Hidalgo 705, Tampico, TAM", hours: "Lun-Sab 9:00 - 21:00", phone: "(833) 123 4567", map: "https://maps.google.com?q=Av.+Hidalgo+705+Tampico" },
+                { id: 16, name: "Bowlly's Madero", address: "Calle Juárez 300, Ciudad Madero, TAM", hours: "Lun-Dom 9:00 - 20:00", phone: "(833) 998 1122", map: "https://maps.google.com?q=Calle+Juarez+300+Ciudad+Madero" }
+            ],
+            bajacalifornia: [
+                { id: 8, name: "Bowlly's Tijuana Centro", address: "Paseo de los Héroes 500, Tijuana, BC", hours: "Lun-Dom 10:00 - 22:00", phone: "(664) 123 4567", map: "https://maps.google.com?q=Paseo+de+los+Heroes+500+Tijuana" },
+                { id: 17, name: "Bowlly's Rosarito", address: "Blvd. Benito Juárez 10, Playas de Rosarito, BC", hours: "Lun-Dom 9:00 - 21:00", phone: "(661) 223 3344", map: "https://maps.google.com?q=Blvd.+Benito+Juarez+10+Rosarito" }
+            ],
+            veracruz: [
+                { id: 9, name: "Bowlly's Buenavista", address: "Av. Miguel Ángel de Quevedo 210, Veracruz, VER", hours: "Lun-Dom 8:00 - 22:00", phone: "(229) 123 4567", map: "https://maps.google.com?q=Av.+Miguel+Angel+de+Quevedo+210+Veracruz" },
+                { id: 18, name: "Bowlly's Boca del Río", address: "Av. Ruiz Cortines 1500, Boca del Río, VER", hours: "Lun-Dom 9:00 - 23:00", phone: "(229) 998 5544", map: "https://maps.google.com?q=Av.+Ruiz+Cortines+1500+Boca+del+Rio" }
+            ],
+            quintanaroo: [
+                { id: 10, name: "Bowlly's Cancún Centro", address: "Av. Tulum 120, Cancún, QR", hours: "Lun-Dom 9:00 - 23:00", phone: "(998) 123 4567", map: "https://maps.google.com?q=Av.+Tulum+120+Cancun" },
+                { id: 19, name: "Bowlly's Playa del Carmen", address: "Calle 10 Norte 45, Playa del Carmen, QR", hours: "Lun-Dom 9:00 - 22:00", phone: "(984) 223 4455", map: "https://maps.google.com?q=Calle+10+Norte+45+Playa+del+Carmen" }
+            ]
+        };
+
+        const branchListEl = document.getElementById('branchList');
+        const branchNameEl = document.getElementById('branchName');
+        const branchAddressEl = document.getElementById('branchAddress');
+        const branchHoursEl = document.getElementById('branchHours');
+        const branchPhoneEl = document.getElementById('branchPhone');
+        const branchMapLinkEl = document.getElementById('branchMapLink');
+
+        // Function to open modal and populate list for a given state key
+        function openBranchesModal(stateKey) {
+            const branches = branchesData[stateKey] || [];
+            branchListEl.innerHTML = '';
+
+            if (branches.length === 0) {
+                branchListEl.innerHTML = '<div class="p-3">No hay sucursales registradas para esta región.</div>';
+                branchNameEl.textContent = 'Sin sucursales';
+                branchAddressEl.textContent = '';
+                branchHoursEl.textContent = '';
+                branchPhoneEl.textContent = '';
+                branchMapLinkEl.style.display = 'none';
+            } else {
+                branches.forEach((b, idx) => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = b.name;
+                    item.dataset.branchId = b.id;
+                    item.addEventListener('click', () => showBranchDetails(b));
+                    branchListEl.appendChild(item);
+                });
+                // Show first branch by default
+                showBranchDetails(branches[0]);
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('branchesModal'));
+            modal.show();
+        }
+
+        function showBranchDetails(branch) {
+            branchNameEl.textContent = branch.name;
+            branchAddressEl.textContent = branch.address;
+            branchHoursEl.textContent = 'Horario: ' + branch.hours;
+            branchPhoneEl.textContent = 'Tel: ' + branch.phone;
+            branchMapLinkEl.href = branch.map;
+            branchMapLinkEl.style.display = 'inline-block';
+
+            // highlight selected in list
+            const items = branchListEl.querySelectorAll('.list-group-item');
+            items.forEach(it => it.classList.remove('active'));
+            const selected = Array.from(items).find(it => it.dataset.branchId == branch.id);
+            if (selected) selected.classList.add('active');
+        }
+
+        // Attach click handlers to buttons on page
+        document.querySelectorAll('.btn-view-branches').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const stateKey = btn.dataset.state;
+                openBranchesModal(stateKey);
+            });
+        });
+    </script>
+}
