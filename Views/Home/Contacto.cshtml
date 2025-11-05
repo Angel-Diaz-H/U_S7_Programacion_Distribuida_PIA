@@ -1,32 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Contacto";
-}
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
-    <div class="container">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-            <img src="https://static.wixstatic.com/media/d606f3_59850432cfdd4507a547397bbd1b1e5d~mv2.png" alt="SuperSalads" height="29">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#">Rewards</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Nosotros</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Sucursales">Sucursales</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
-                <li class="nav-item ms-lg-3">
-                    <a href="#" class="btn btn-order">ORDENAR AHORA ></a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!--ENCABEZADO-->
+﻿<!--ENCABEZADO-->
 
 <section class="contacto-header text-center text-white py-5">
     <div class="container">
@@ -48,49 +20,3 @@
         </div>
     </div>
 </section>
-
-<footer class="footer">
-    <div class="container text-center">
-        <div class="row justify-content-center align-items-start footer-links">
-            <div class="col-6 col-md-2 mb-3">
-                <ul class="list-unstyled">
-                    <li><a href="#">Descarga la App</a></li>
-                    <li><a href="#">Facturación</a></li>
-                    <li><a href="#">Legales Promociones</a></li>
-                    <li><a href="#">Gift Cards</a></li>
-                </ul>
-            </div>
-
-            <div class="col-6 col-md-2 mb-3">
-                <ul class="list-unstyled">
-                    <li><a href="#">Aviso de Privacidad</a></li>
-                    <li><a href="#">Rewards</a></li>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="#">Franquicias</a></li>
-                </ul>
-            </div>
-
-            <div class="col-6 col-md-2 mb-3">
-                <ul class="list-unstyled">
-                    <li><a href="#">Únete al Equipo</a></li>
-                    <li><a href="#">Tu Evento</a></li>
-                </ul>
-            </div>
-
-            <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
-                <img src="~/images/footer.png" alt="Super Salads" class="footer-icon">
-            </div>
-        </div>
-
-        <hr class="footer-divider" />
-
-        <div class="footer-bottom text-center">
-            <p>Derechos reservados Super Salads Sa de Cv 2025</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-tiktok"></i></a>
-            </div>
-        </div>
-    </div>
-</footer>
