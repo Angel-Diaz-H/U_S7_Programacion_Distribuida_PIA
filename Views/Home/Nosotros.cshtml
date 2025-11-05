@@ -1,1 +1,84 @@
-﻿<h1>Nosotros</h1>
+﻿@{
+    ViewData["Title"] = "Nosotros";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/nosotros.css" asp-append-version="true" />
+}
+
+<section class="nosotros-hero text-center">
+    <div class="container">
+        <h1 class="title">Nuestra historia</h1>
+        <p class="lead">Desde hace 5 años nos dedicamos con pasión a crear experiencias gastronómicas memorables. Lo que comenzó como la idea de un pequeño grupo de amigos con amor por la cocina, hoy es un lugar donde familias y amigos se reúnen para compartir momentos y sabores únicos. Nos encantaría recibirte y ser parte de tus mejores recuerdos.</p>
+    </div>
+</section>
+
+<section class="story-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-7">
+                <div class="story-card">
+                    <h3>De un sueño a cinco años de realidad</h3>
+                    <p>Hace cinco años abrimos nuestras puertas con la convicción de ofrecer comida fresca, balanceada y llena de sabor. Empezamos en un local pequeño, con mesas de madera y una carta reducida, pero con una propuesta clara: ingredientes de calidad, recetas honestas y un servicio cercano. A lo largo de estos años hemos ido creciendo, escuchando a nuestros clientes y mejorando cada detalle para ofrecer una experiencia coherente y auténtica.</p>
+                    <p>Nuestro equipo ha recorrido un camino de aprendizaje constante: desde seleccionar proveedores locales hasta perfeccionar tiempos de cocción y presentación. Cada receta fue probada hasta encontrar su mejor versión, siempre priorizando la salud y el sabor. Te invitamos a conocer nuestras raíces, nuestras técnicas y ese cuidado que ponemos en cada plato.</p>
+                </div>
+                <div class="story-card">
+                    <h3>Nuestro compromiso</h3>
+                    <p>Creemos en la comunidad y en el servicio responsable. Por eso trabajamos con productores cercanos, reducimos el desperdicio y usamos envases sostenibles siempre que es posible. Además, formamos parte de iniciativas locales para apoyar el talento gastronómico y artístico de nuestra ciudad.</p>
+                    <p>Nos importa que te sientas en casa: si tienes alergias o preferencias, nuestro equipo está listo para ayudarte. Si vienes por primera vez, pregunta por nuestras recomendaciones; nos encantará orientarte.</p>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="story-card mb-4">
+                    <h3>Espacios pensados para compartir</h3>
+                    <p>Nuestro local combina áreas íntimas para dos personas con mesas amplias para reuniones y eventos. La decoración busca un equilibrio entre lo moderno y lo acogedor: madera natural, tonos verdes y detalles artesanales que honran la tradición culinaria local.</p>
+                </div>
+
+                <div class="story-card">
+                    <h3>La cocina y nuestro equipo</h3>
+                    <p>Contamos con un equipo humano apasionado: chefs formados, asistentes de cocina y personal de servicio que trabajan en conjunto para que cada plato llegue perfecto a tu mesa. Nos tomamos el tiempo para entrenar y compartir buenas prácticas, lo que se refleja en la consistencia y calidad de nuestro servicio.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="team-section">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-success">Nuestro equipo</h2>
+            <p class="text-muted">Un grupo diverso que comparte la misma visión: servir con corazón.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-sm-6 col-md-3">
+                <div class="team-member">
+                    <img src="~/images/Logo1.png" alt="Miembro 1" />
+                    <h5>Carolina — Fundadora y Chef</h5>
+                    <p>Apasionada por la cocina saludable, Carolina lidera la creación de recetas y mantiene el estándar de calidad en cada platillo.</p>
+                </div>
+            </div>
+n            <div class="col-sm-6 col-md-3">
+                <div class="team-member">
+                    <img src="~/images/Logo1.png" alt="Miembro 2" />
+                    <p>Encargado de la logística, Rafael asegura que todo funcione sin contratiempos, desde la cocina hasta la atención al cliente.</p>
+                </div>
+            </div>
+n            <div class="col-sm-6 col-md-3">
+                    <img src="~/images/Logo1.png" alt="Miembro 3" />
+                    <h5>María — Community & Marketing</h5>
+                    <p>Comunica nuestras novedades y mantiene el lazo con la comunidad, siempre con creatividad y cercanía.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section text-center">
+    <div class="container">
+        <h3 class="mb-3">Ven a conocernos</h3>
+        <p class="mb-4">Si estás cerca, pasa a saludarnos. Tenemos ofertas especiales para nuevos visitantes y un programa de lealtad por puntos para clientes frecuentes. ¡Nos encantaría recibirte!</p>
+        <a class="btn btn-light" asp-controller="Home" asp-action="Sucursales">Ver sucursales</a>
+    </div>
+</section>

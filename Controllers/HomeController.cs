@@ -48,5 +48,11 @@ namespace TuProyecto.Controllers
         {
             return View();
         }
+
+        // Acción para la vista Nosotros
+        public IActionResult Nosotros()
+        {
+            return View();
+        }
     }
 }
