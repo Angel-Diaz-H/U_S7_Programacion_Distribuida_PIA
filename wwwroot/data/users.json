@@ -1,0 +1,7 @@
+[
+  { "Username": "claudia", "Password": "1234", "DisplayName": "Claudia Campos", "Email": "claudia@gmail.com" },
+  { "Username": "angel", "Password": "angel123", "DisplayName": "Angel Díaz", "Email": "angel@gmail.com" },
+  { "Username": "roberto", "Password": "rober2", "DisplayName": "Roberto Zavala", "Email": "robert@gmail.com" },
+  { "Username": "lizz", "Password": "liz1234", "DisplayName": "Lizbet Martínez", "Email": "lizz@gmail.com" },
+  { "Username": "emma", "Password": "emma-w", "DisplayName": "Emma Pérez", "Email": "emma@gmail.com" }
+]

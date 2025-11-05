@@ -1,9 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using System.Text.Json;
 
 namespace TuProyecto.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IWebHostEnvironment _env;
+
+        public HomeController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         // Página principal
         public IActionResult Index()
         {
@@ -20,20 +29,34 @@ namespace TuProyecto.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(string username, string password)
         {
-    
-            string userValido = "claudia";
-            string passValida = "1234";
+            try
+            {
+                // Ruta al JSON de usuarios dentro de wwwroot/data/users.json
+                var dataPath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "users.json");
+                if (!System.IO.File.Exists(dataPath))
+                {
+                    ViewBag.ErrorMessage = "No se encontró el archivo de usuarios.";
+                    return View();
+                }
 
-            if (username == userValido && password == passValida)
-            {
-            
-                ViewBag.SuccessMessage = $"Bienvenido, {username}";
-                return RedirectToAction("Index", "Home");
+                var json = System.IO.File.ReadAllText(dataPath);
+                var users = JsonSerializer.Deserialize<List<UserModel>>(json) ?? new List<UserModel>();
+
+                var user = users.FirstOrDefault(u => u.Username == username && u.Password == password);
+                if (user != null)
+                {
+                    TempData["SuccessMessage"] = $"Bienvenido, {user.DisplayName ?? user.Username}";
+                    // For now we just redirect to Index. A proper auth system can be added later.
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Usuario o contraseña incorrectos";
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-          
-                ViewBag.ErrorMessage = "Usuario o contraseña incorrectos";
+                ViewBag.ErrorMessage = "Error al validar el usuario.";
             }
 
             return View();
@@ -60,5 +83,14 @@ namespace TuProyecto.Controllers
         {
             return View();
         }
+    }
+
+    // Simple model for deserializing users.json
+    public class UserModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string? DisplayName { get; set; }
+        public string? Email { get; set; }
     }
 }
