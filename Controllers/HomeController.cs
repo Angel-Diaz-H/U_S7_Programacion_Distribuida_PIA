@@ -45,8 +45,11 @@ namespace TuProyecto.Controllers
                 var user = users.FirstOrDefault(u => u.Username == username && u.Password == password);
                 if (user != null)
                 {
+                    // Store basic user info in session for demo purposes
+                    HttpContext.Session.SetString("LoggedInUser", user.Username);
+                    HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
+
                     TempData["SuccessMessage"] = $"Bienvenido, {user.DisplayName ?? user.Username}";
-                    // For now we just redirect to Index. A proper auth system can be added later.
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -82,6 +85,29 @@ namespace TuProyecto.Controllers
         public IActionResult Reto()
         {
             return View();
+        }
+
+        // Demo account page showing session user info
+        public IActionResult MiCuenta()
+        {
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            var display = HttpContext.Session.GetString("LoggedInDisplayName");
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("IniciarSesion");
+            }
+
+            ViewData["Username"] = username;
+            ViewData["DisplayName"] = display;
+            return View();
+        }
+
+        // Logout demo
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("LoggedInUser");
+            HttpContext.Session.Remove("LoggedInDisplayName");
+            return RedirectToAction("Index");
         }
     }
 

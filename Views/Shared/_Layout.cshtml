@@ -32,7 +32,19 @@
                     @*<li class="nav-item"><a class="nav-link" href="#">Rewards</a></li>*@
                     @*<li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>*@
                     <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
-                    <li class="nav-item ms-lg-3"><a class="btn btn-order" asp-controller="Home" asp-action="IniciarSesion">Iniciar sesión</a></li>
+
+                    @if (Context.Session.GetString("LoggedInUser") != null)
+                    {
+                        <li class="nav-item ms-lg-3">
+                            <a class="btn btn-outline-success d-flex align-items-center gap-2" asp-controller="Home" asp-action="MiCuenta">
+                                <span>@(Context.Session.GetString("LoggedInDisplayName") ?? "Mi cuenta")</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item ms-lg-3"><a class="btn btn-order" asp-controller="Home" asp-action="IniciarSesion">Iniciar sesión</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -77,7 +89,7 @@
                     <div class="social-icons mt-2">
                         <a href="https://www.facebook.com/" target="_blank" class="me-2"><i class="fab fa-facebook-f"></i></a>
                         <a href="https://www.instagram.com/" target="_blank" class="me-2"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/es" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.tiktok.com/es" target="_blank" class="me-2"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
             </div>
