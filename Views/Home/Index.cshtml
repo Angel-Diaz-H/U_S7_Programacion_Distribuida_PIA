@@ -13,33 +13,56 @@
 <section class="gift-section py-5">
     <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-center gap-5">
 
-        <!-- Carrusel -->
-        <div id="giftCardCarousel" class="carousel slide gift-carousel" data-bs-ride="carousel">
+        <!-- Carrusel (ahora usa persona1..persona4 y es más grande) -->
+        <div id="giftCardCarousel" class="carousel slide gift-carousel gift-carousel-lg" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#giftCardCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#giftCardCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#giftCardCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#giftCardCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+
             <div class="carousel-inner rounded shadow">
                 <div class="carousel-item active">
-                    <img src="https://static.wixstatic.com/media/d606f3_629bd8c05521457cbc34eed2bb7c984e~mv2.jpg" class="d-block w-100 rounded" alt="Gift 1">
+                    <img src="~/images/persona1.png" class="d-block w-100 rounded" alt="Persona 1">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h5>Conexiones reales</h5>
+                        <p>Historias compartidas en cada mesa.</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://static.wixstatic.com/media/d606f3_a04e05565fa44e77803f5f16c6efa316~mv2.jpg" class="d-block w-100 rounded" alt="Gift 2">
+                    <img src="~/images/persona2.png" class="d-block w-100 rounded" alt="Persona 2">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h5>Sabores auténticos</h5>
+                        <p>Ingredientes frescos preparados con cariño.</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://static.wixstatic.com/media/d606f3_76c2f1c370a24084a7dc7a33e41e06fc~mv2.jpg" class="d-block w-100 rounded" alt="Gift 3">
+                    <img src="~/images/persona3.png" class="d-block w-100 rounded" alt="Persona 3">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h5>Momentos para celebrar</h5>
+                        <p>Espacios pensados para reuniones y eventos.</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="https://static.wixstatic.com/media/d606f3_e8bc30ff14d74bdca0da028974f73f32~mv2.jpg" class="d-block w-100 rounded" alt="Gift 4">
+                    <img src="~/images/persona4.png" class="d-block w-100 rounded" alt="Persona 4">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h5>Bienestar en cada bocado</h5>
+                        <p>Platos diseñados para nutrir y sorprender.</p>
+                    </div>
                 </div>
             </div>
+
             <button class="carousel-control-prev" type="button" data-bs-target="#giftCardCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#giftCardCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Siguiente</span>
             </button>
         </div>
 
-       
         <div class="gift-text text-center text-lg-start text-white">
             <h2 class="fw-bold">Vive sano, <br />ríe mucho y disfruta cada bocado.</h2>
             <p class="fs-5 mb-0">Comparte momentos que nutren el alma y el cuerpo, aquí en Bowlly's.</p>

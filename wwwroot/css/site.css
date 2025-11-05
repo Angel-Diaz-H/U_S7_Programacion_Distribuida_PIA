@@ -93,6 +93,66 @@
             height: 260px;
             display: block;
         }
+/* --- Cambios para carousel grande: gift-carousel-lg --- */
+.gift-carousel-lg {
+    max-width: 720px; /* aumentar ancho */
+}
+
+.gift-carousel-lg .carousel-inner {
+    height: 420px; /* altura mayor para imágenes */
+}
+
+.gift-carousel-lg .carousel-item img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Captions más visibles */
+.gift-carousel-lg .carousel-caption {
+    position: absolute;
+    left: 1rem;
+    right: auto;
+    bottom: 1.5rem;
+    text-align: left;
+    transform: none;
+    background: linear-gradient(90deg, rgba(15,87,76,0.92) 0%, rgba(15,87,76,0.6) 100%);
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.gift-carousel-lg .carousel-caption h5 {
+    color: #fff;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.gift-carousel-lg .carousel-caption p {
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Indicadores y controles más visibles */
+.gift-carousel-lg .carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+}
+
+.gift-carousel-lg .carousel-indicators .active {
+    background-color: #fff;
+}
+
+.gift-carousel-lg .carousel-control-prev-icon,
+.gift-carousel-lg .carousel-control-next-icon {
+    width: 3rem;
+    height: 3rem;
+    background-size: 100% 100%;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25)) invert(1);
+}
 
 /* Texto dentro del bloque verde */
 .gift-text {
@@ -461,3 +521,28 @@
         .login-box button:hover {
             background-color: #064a3b;
         }
+
+/* Ajustes responsivos */
+@media (max-width: 991px) {
+    .gift-carousel-lg {
+        max-width: 620px;
+    }
+n    .gift-carousel-lg .carousel-inner,
+    .gift-carousel-lg .carousel-item img {
+        height: 340px;
+}
+
+@media (max-width: 767px) {
+    .gift-carousel-lg {
+        max-width: 100%;
+    }
+
+    .gift-carousel-lg .carousel-inner,
+    .gift-carousel-lg .carousel-item img {
+        height: 260px; /* volver a tamaño móvil original */
+    }
+n    .gift-carousel-lg .carousel-caption {
+        position: static;
+        background: rgba(0,0,0,0.45);
+        margin-top: 8px;
+}
