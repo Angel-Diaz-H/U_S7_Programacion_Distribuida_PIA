@@ -22,6 +22,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Add a status code page that re-executes requests to a friendly error handler (handles 404)
+app.UseStatusCodePagesWithReExecute("/Home/Error404");
+
 // HTTPS redirection may warn if no HTTPS port is configured when running from bin; leave enabled when running from project/publish
 app.UseHttpsRedirection();
 

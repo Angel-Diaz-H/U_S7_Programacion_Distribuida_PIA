@@ -410,6 +410,20 @@ namespace TuProyecto.Controllers
 
             return Json(new { success = true, availability = result });
         }
+
+        // Generic error page used by exception handler
+        public IActionResult Error()
+        {
+            return View("Error");
+        }
+
+        // Friendly 404 handler
+        [HttpGet]
+        public IActionResult Error404()
+        {
+            Response.StatusCode = 404;
+            return View("Error404");
+        }
     }
 
     // Simple model for deserializing users.json
