@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Text;
 using System.Text.Json;
+using TuProyecto.Models;
 
 namespace TuProyecto.Controllers
 {
@@ -129,7 +130,7 @@ namespace TuProyecto.Controllers
 
                 if (foundByNameOrEmail == null)
                 {
-                    ViewBag.ErrorMessage = $"Usuario no encontrado. Usuarios cargados: {users.Count}";
+                    ViewBag.ErrorMessage = $"Usuario no encontrado.";
                     return View();
                 }
 
@@ -348,16 +349,29 @@ namespace TuProyecto.Controllers
         public IActionResult MiCuenta()
         {
             var username = HttpContext.Session.GetString("LoggedInUser");
-            var display = HttpContext.Session.GetString("LoggedInDisplayName");
-            var email = HttpContext.Session.GetString("LoggedInEmail");
             if (string.IsNullOrEmpty(username))
             {
                 return RedirectToAction("IniciarSesion");
             }
 
+            var users = LoadUsersFromWebRoot(out var loadError);
+            var user = users.FirstOrDefault(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+
             ViewData["Username"] = username;
-            ViewData["DisplayName"] = display;
-            ViewData["Email"] = email;
+            ViewData["DisplayName"] = HttpContext.Session.GetString("LoggedInDisplayName") ?? username;
+            ViewData["Email"] = HttpContext.Session.GetString("LoggedInEmail") ?? string.Empty;
+
+            if (user != null)
+            {
+                ViewData["FullName"] = user.DisplayName ?? username;
+                ViewData["DateOfBirth"] = user.DateOfBirth ?? string.Empty;
+            }
+            else
+            {
+                ViewData["FullName"] = ViewData["DisplayName"];
+                ViewData["DateOfBirth"] = string.Empty;
+            }
+
             return View();
         }
 
@@ -424,15 +438,6 @@ namespace TuProyecto.Controllers
             Response.StatusCode = 404;
             return View("Error404");
         }
-    }
-
-    // Simple model for deserializing users.json
-    public class UserModel
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string? DisplayName { get; set; }
-        public string? Email { get; set; }
     }
 
     public class BranchModel

@@ -2,71 +2,154 @@
   {
     "Username": "claudia",
     "Password": "1234",
-    "Email": null
+    "Email": null,
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "angel",
     "Password": "angel123",
-    "Email": null
+    "Email": "angel32@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "roberto",
     "Password": "rober2",
-    "Email": null
+    "Email": null,
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "lizz",
     "Password": "liz1234",
-    "Email": null
+    "Email": null,
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "emma",
     "Password": "emma-w",
-    "Email": null
+    "Email": null,
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "OscarGuel",
     "Password": "G12345",
-    "Email": "oscar.guel012@gmail.com"
+    "Email": "oscar.guel012@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "KalebGuel",
     "Password": "123456",
-    "Email": "elrayado321@gmail.com"
+    "Email": "elrayado321@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "Diego",
     "Password": "123456789",
-    "Email": "diego-3@gmail.com"
+    "Email": "diego-3@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "Angel",
     "Password": "123456789",
-    "Email": "angel-2@gmail.com"
+    "Email": "angel-2@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "Debian",
     "Password": "1234",
-    "Email": "deb@gmail.com"
+    "Email": "deb@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "pedro",
     "Password": "1234",
-    "Email": "pedro@gmail.com"
+    "Email": "pedro@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "juan",
     "Password": "1234",
-    "Email": "juan@gmail.com"
+    "Email": "juan@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "sergio",
     "Password": "1234",
-    "Email": "ser@gmail.com"
+    "Email": "ser@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
   },
   {
     "Username": "angel-diaz",
     "Password": "1234",
-    "Email": "angel@gmail.com"
+    "Email": "angel@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
+  },
+  {
+    "Username": "angel329",
+    "Password": "123",
+    "Email": "angel@gmail.com",
+    "FirstName": null,
+    "MiddleName": null,
+    "LastName": null,
+    "DateOfBirth": null
+  },
+  {
+    "Username": "angel23",
+    "Password": "123",
+    "Email": "angel@gmail.com",
+    "FirstName": "Angel Ignacio",
+    "MiddleName": "Hernández",
+    "LastName": "Díaz",
+    "DateOfBirth": "0200-10-19"
+  },
+  {
+    "Username": "keencito",
+    "Password": "123",
+    "Email": "kee@gmail.com",
+    "FirstName": "Keen Roberto",
+    "MiddleName": "Díaz",
+    "LastName": "Roberto",
+    "DateOfBirth": "0020-02-10"
   }
 ]
