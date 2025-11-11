@@ -5,6 +5,71 @@
     color: #0f574c;
 }
 
+/* ====== Global roundness improvements ====== */
+:root {
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+}
+
+/* Make bootstrap modal/content more rounded */
+.modal-content {
+    border-radius: var(--radius-lg) !important;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-top-left-radius: var(--radius-lg) !important;
+    border-top-right-radius: var(--radius-lg) !important;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-bottom-left-radius: var(--radius-lg) !important;
+    border-bottom-right-radius: var(--radius-lg) !important;
+    border-top: none;
+}
+
+/* Slightly round the modal dialog itself (visual spacing on small screens) */
+.modal-dialog {
+    border-radius: var(--radius-lg);
+}
+
+/* Make cards and panels softer */
+.card {
+    border-radius: var(--radius-md) !important;
+}
+
+/* Buttons should be more pill-like across the site */
+.btn, .btn-order, .btn-primary, .btn-light-custom {
+    border-radius: 999px !important; /* fully pill-shaped like navbar button */
+}
+
+/* Make inputs and boxes softer */
+.login-box, .gift-carousel .carousel-inner, .gift-carousel-lg .carousel-inner {
+    border-radius: var(--radius-md) !important;
+}
+
+/* Specific: sucursales list inside modal may contain left/right panes; add subtle rounding to the list items */
+.sucursales-modal .list-group-item, .sucursales-modal .list-group {
+    border-radius: var(--radius-sm);
+}
+
+/* Ensure the modal close button (x) has a rounded background when present */
+.modal-header .btn-close {
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    padding: 6px;
+}
+
+/* Mobile tweak: ensure rounded elements don't overflow screen */
+@media (max-width: 576px) {
+    .modal-content {
+        margin: 10px;
+        border-radius: 12px !important;
+    }
+}
+
 /* NAVBAR */
 .navbar-light .nav-link {
     color: #0f574c !important;
