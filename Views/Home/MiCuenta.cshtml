@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Mi cuenta";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm p-3 p-5">
+                    <div class="card-body">
+                            <img src="~/images/Logo1.png" alt="Bowlly's" class="mb-3" style="width:250px;object-fit:cover;border-radius:8px;" />
+
+                                <h1 class="card-title mb-3">Mi cuenta</h1>
+                                <p class="text-muted mb-3">Bienvenido <strong>@ViewData["DisplayName"]</strong></p>
+                        <p class="text-muted">Usuario: <strong>@ViewData["Username"]</strong></p>
+                        <p class="text-muted">Nombre: <strong>@ViewData["DisplayName"]</strong></p>
+                        <p class="text-muted">Correo: <strong>@ViewData["Email"]</strong></p>
+                        <h3 class="mb-3">Hola, <strong>@ViewData["DisplayName"]</strong>.</h3>
+                        <p>Aquí se verán los pedidos, puntos del usuario.</p>
+                        <a class="btn btn-outline-success mt-3" asp-controller="Home" asp-action="Logout">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

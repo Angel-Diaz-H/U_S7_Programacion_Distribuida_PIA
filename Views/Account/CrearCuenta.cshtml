@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "CrearCuenta";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+}
+
+<section class="login-section d-flex align-items-center justify-content-center">
+    <div class="login-box p-5 shadow-lg rounded-4 bg-white" style="max-width: 450px; width: 100%;">
+        <div class="text-center mb-4">
+            <img src="~/images/Logo1.png" alt="SuperSalads Logo" height="70" />
+            <h3 class="mt-3 fw-bold text-success">Crear Cuenta</h3>
+            <p class="text-muted mb-4">Completa tus datos para registrarte</p>
+        </div>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert alert-success text-center fw-semibold">@ViewBag.SuccessMessage</div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center fw-semibold">@ViewBag.ErrorMessage</div>
+        }
+        
+        
+        <form method="post" asp-action="Register" asp-controller="Account">
+            <div class="mb-3">
+                <label for="username" class="form-label fw-semibold">Usuario</label>
+                <input id="username" name="username" class="form-control form-control-lg" placeholder="Ej. JuanPerez" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+                <input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Contraseña</label>
+                <input id="password" name="password" type="password" class="form-control form-control-lg" placeholder="********" required />
+            </div>
+
+            <div class="mb-4">
+                <label for="confirmPassword" class="form-label fw-semibold">Confirmar Contraseña</label>
+                <input id="confirmPassword" name="confirmPassword" type="password" class="form-control form-control-lg" placeholder="********" required />
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 py-2 fw-bold mb-2">
+                Registrarme
+            </button>
+
+            <a asp-controller="Home" asp-action="IniciarSesion" class="btn btn-outline-secondary w-100 py-2 fw-bold mt-2">
+                Ya tengo una cuenta, iniciar
+            </a>
+
+        </form>
+
+        
+
+
+    </div>
+</section>

@@ -1,0 +1,14 @@
+:root{--green:#0f574c;--light:#f6f9f6}
+
+.reto-hero{background:linear-gradient(180deg,#fff 0%, #f7fff9 100%);padding:60px 0}
+.reto-hero .display-5{color:var(--green);}
+.reto-hero .lead{color:#576a63}
+.reto-hero-img{max-width:100%;height:auto;border-radius:12px;object-fit:cover}
+
+.reto-details .card{border-radius:12px;border:0}
+.reto-details .card h5{color:var(--green)}
+
+.reto-cta{background:linear-gradient(90deg,var(--green),#064a3b);color:#fff;padding:50px 0}
+.reto-cta .btn-light{background:#fff;color:var(--green);border-radius:40px;padding:12px 28px;font-weight:700}
+
+@media(max-width:767px){.reto-hero{padding:30px 0}.reto-hero .display-5{font-size:1.6rem}.reto-hero-img{margin-top:18px}}

@@ -1,0 +1,47 @@
+[
+  {
+    "Username": "claudia",
+    "Password": "1234",
+    "Email": null
+  },
+  {
+    "Username": "angel",
+    "Password": "angel123",
+    "Email": null
+  },
+  {
+    "Username": "roberto",
+    "Password": "rober2",
+    "Email": null
+  },
+  {
+    "Username": "lizz",
+    "Password": "liz1234",
+    "Email": null
+  },
+  {
+    "Username": "emma",
+    "Password": "emma-w",
+    "Email": null
+  },
+  {
+    "Username": "OscarGuel",
+    "Password": "G12345",
+    "Email": "oscar.guel012@gmail.com"
+  },
+  {
+    "Username": "KalebGuel",
+    "Password": "123456",
+    "Email": "elrayado321@gmail.com"
+  },
+  {
+    "Username": "Diego",
+    "Password": "123456789",
+    "Email": "diego-3@gmail.com"
+  },
+  {
+    "Username": "Angel",
+    "Password": "123456789",
+    "Email": "angel-2@gmail.com"
+  }
+]

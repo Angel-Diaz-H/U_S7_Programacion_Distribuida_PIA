@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Contacto";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sucursales.css" asp-append-version="true" />
+}
+
+<!--ENCABEZADO-->
+<section class="contacto-header text-center text-white py-5">
+    <div class="container">
+        <h2 class="fw-bold">Contacto</h2>
+    </div>
+</section>
+
+<!-- PRINCIPAL -->
+<section class="contacto-main py-5">
+    <div class="container text-center">
+        <div class="contacto-links mx-auto">
+            <button class="contacto-btn btn-contact w-100" data-contact="dudas">Dudas y Sugerencias</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="facturacion">Facturación</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="rewards">Rewards | App</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="puntos">Acumulación de Puntos</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="franquicias">Franquicias</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="trabajo">Bolsa de Trabajo</button>
+            <button class="contacto-btn btn-contact w-100" data-contact="proveedores">Proveedores</button>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de contacto (un solo panel de detalles) -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="contactModalLabel">Contacto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="contactDetails" class="px-3">
+                    <h4 id="contactTitle">Selecciona un tema de contacto</h4>
+                    <p id="contactPhone" class="mb-1 text-muted"></p>
+                    <p id="contactEmail" class="mb-1"></p>
+                    <p id="contactHours" class="mb-1"></p>
+                    <p id="contactNotes" class="mb-1"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const contactData = {
+            dudas: { id: 'dudas', name: "Dudas y Sugerencias", phone: "(81) 5555 0101", email: "contacto@bowllys.com", hours: "Lun-Vie 9:00 - 18:00", notes: "Atendemos tus dudas sobre menús, pedidos y experiencia en local. Respuesta en 48 horas hábiles." },
+            facturacion: { id: 'facturacion', name: "Facturación", phone: "(81) 5555 0202", email: "facturacion@bowllys.com", hours: "Lun-Vie 9:00 - 17:00", notes: "Envía tu ticket y RFC al correo para emitir comprobante fiscal. Tiempo estimado de proceso: 3 días hábiles." },
+            rewards: { id: 'rewards', name: "Rewards | App", phone: "(81) 5555 0303", email: "rewards@bowllys.com", hours: "Lun-Dom 10:00 - 20:00", notes: "Soporte para la aplicación y programa de lealtad. Reporta problemas de acceso o acumulación de puntos." },
+            puntos: { id: 'puntos', name: "Acumulación de Puntos", phone: "(81) 5555 0304", email: "puntos@bowllys.com", hours: "Lun-Dom 10:00 - 20:00", notes: "Consulta sobre saldo de puntos, redenciones y promociones vigentes." },
+            franquicias: { id: 'franquicias', name: "Franquicias", phone: "(81) 5555 0404", email: "franquicias@bowllys.com", hours: "Lun-Vie 9:00 - 18:00", notes: "Interesados en franquicias, por favor envíen información de contacto y experiencia comercial. Nuestro equipo revisará y responderá." },
+            trabajo: { id: 'trabajo', name: "Bolsa de Trabajo", phone: "(81) 5555 0505", email: "talento@bowllys.com", hours: "Lun-Vie 9:00 - 17:00", notes: "Envía tu CV y disponibilidad. Publicamos vacantes en redes y contactamos candidatos preseleccionados." },
+            proveedores: { id: 'proveedores', name: "Proveedores", phone: "(81) 5555 0606", email: "proveedores@bowllys.com", hours: "Lun-Vie 9:00 - 17:00", notes: "Si eres proveedor local de productos frescos o sostenibles, envíanos catálogo y condiciones. Buscamos alianzas responsables." }
+        };
+
+        const contactTitleEl = document.getElementById('contactTitle');
+        const contactPhoneEl = document.getElementById('contactPhone');
+        const contactEmailEl = document.getElementById('contactEmail');
+        const contactHoursEl = document.getElementById('contactHours');
+        const contactNotesEl = document.getElementById('contactNotes');
+
+        // Open modal showing only the selected topic (single panel)
+        function openContactModal(topicKey) {
+            const topic = contactData[topicKey];
+            if (!topic) return;
+
+            showContactDetails(topic);
+
+            const modal = new bootstrap.Modal(document.getElementById('contactModal'));
+            modal.show();
+        }
+
+        function showContactDetails(topic) {
+            contactTitleEl.textContent = topic.name;
+            contactPhoneEl.textContent = 'Tel: ' + topic.phone;
+            contactEmailEl.innerHTML = 'Email: <a href="mailto:' + topic.email + '">' + topic.email + '</a>';
+            contactHoursEl.textContent = 'Horario: ' + topic.hours;
+            contactNotesEl.textContent = topic.notes;
+        }
+
+        document.querySelectorAll('.btn-contact').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.contact;
+                openContactModal(key);
+            });
+        });
+    </script>
+}
