@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
 
-namespace LoginJsonDemo.Controllers
+namespace TuProyecto.Controllers
 {
     public class AccountController : Controller
     {
@@ -33,7 +33,8 @@ namespace LoginJsonDemo.Controllers
                 return new List<User>();
 
             var json = System.IO.File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<List<User>>(json) ?? new List<User>();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
         }
 
         // 🔹 GET Login
@@ -47,14 +48,18 @@ namespace LoginJsonDemo.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
+            var inputUser = (username ?? string.Empty).Trim();
+            var inputPass = (password ?? string.Empty).Trim();
+
             var users = LoadUsers();
-            var user = users.Find(u => u.Username == username && u.Password == password);
+            var user = users.Find(u => string.Equals((u.Username ?? string.Empty).Trim(), inputUser, System.StringComparison.OrdinalIgnoreCase)
+                                     && string.Equals((u.Password ?? string.Empty).Trim(), inputPass, System.StringComparison.Ordinal));
 
             if (user != null)
             {
                 // opcional: guardar usuario y correo en sesión
                 HttpContext.Session.SetString("LoggedInUser", user.Username);
-                HttpContext.Session.SetString("LoggedInEmail", user.Email);
+                HttpContext.Session.SetString("LoggedInEmail", user.Email ?? string.Empty);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -63,27 +68,32 @@ namespace LoginJsonDemo.Controllers
             return View();
         }
 
-        // 🔹 GET CrearCuenta
+        // 🔹 GET CrearCuenta - render the view placed under Views/Home
         [HttpGet]
         public IActionResult CrearCuenta()
         {
-            return View();
+            // Only show messages specifically about registration
+            if (TempData.ContainsKey("RegistrationSuccess")) ViewBag.SuccessMessage = TempData["RegistrationSuccess"];
+            if (TempData.ContainsKey("RegistrationError")) ViewBag.ErrorMessage = TempData["RegistrationError"];
+
+            return View("~/Views/Home/CrearCuenta.cshtml");
         }
 
         // 🔹 POST Register
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Register(string username, string email, string password, string confirmPassword)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email))
             {
                 ViewBag.ErrorMessage = "Todos los campos son obligatorios.";
-                return View("CrearCuenta");
+                return View("~/Views/Home/CrearCuenta.cshtml");
             }
 
             if (password != confirmPassword)
             {
                 ViewBag.ErrorMessage = "Las contraseñas no coinciden.";
-                return View("CrearCuenta");
+                return View("~/Views/Home/CrearCuenta.cshtml");
             }
 
             // Ruta al JSON dentro de wwwroot/data
@@ -93,21 +103,36 @@ namespace LoginJsonDemo.Controllers
             if (System.IO.File.Exists(filePath))
             {
                 var json = System.IO.File.ReadAllText(filePath);
-                users = JsonSerializer.Deserialize<List<User>>(json) ?? new List<User>();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                users = JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
             }
 
-            if (users.Exists(u => u.Username == username))
+            if (users.Exists(u => string.Equals((u.Username ?? string.Empty).Trim(), (username ?? string.Empty).Trim(), System.StringComparison.OrdinalIgnoreCase)))
             {
                 ViewBag.ErrorMessage = "El usuario ya existe.";
-                return View("CrearCuenta");
+                return View("~/Views/Home/CrearCuenta.cshtml");
             }
 
-            users.Add(new User { Username = username, Email = email, Password = password });
+            users.Add(new User { Username = username.Trim(), Email = email.Trim(), Password = password.Trim() });
 
             var updatedJson = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText(filePath, updatedJson);
 
-            TempData["SuccessMessage"] = "Cuenta creada exitosamente. Ahora puedes iniciar sesión.";
+            try
+            {
+                // Ensure directory exists
+                var dir = Path.GetDirectoryName(filePath) ?? string.Empty;
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+                System.IO.File.WriteAllText(filePath, updatedJson, System.Text.Encoding.UTF8);
+            }
+            catch
+            {
+                // Use a specific registration error key so it doesn't clash with other success messages
+                TempData["RegistrationError"] = "Error al guardar el usuario.";
+                return RedirectToAction("CrearCuenta");
+            }
+
+            TempData["RegistrationSuccess"] = "Cuenta creada exitosamente. Ahora puedes iniciar sesión.";
             return RedirectToAction("IniciarSesion", "Home");
         }
     }

@@ -40,7 +40,69 @@ namespace TuProyecto.Controllers
         [HttpGet]
         public IActionResult IniciarSesion()
         {
+            // If user is already logged in redirect to MiCuenta
+            var current = HttpContext.Session.GetString("LoggedInUser");
+            if (!string.IsNullOrEmpty(current))
+            {
+                return RedirectToAction("MiCuenta");
+            }
+
+            // expose registration success if present
+            if (TempData.ContainsKey("RegistrationSuccess")) ViewBag.SuccessMessage = TempData["RegistrationSuccess"]; 
+            if (TempData.ContainsKey("RegistrationError")) ViewBag.ErrorMessage = TempData["RegistrationError"]; 
+            if (TempData.ContainsKey("LoginSuccess")) ViewBag.SuccessMessage = TempData["LoginSuccess"];
             return View();
+        }
+
+        private List<UserModel> LoadUsersFromWebRoot(out string? error)
+        {
+            error = null;
+            try
+            {
+                var dataPath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "users.json");
+                if (!System.IO.File.Exists(dataPath))
+                {
+                    error = "users.json not found";
+                    return new List<UserModel>();
+                }
+
+                string json;
+                try
+                {
+                    // Attempt simple read with UTF8
+                    json = System.IO.File.ReadAllText(dataPath, Encoding.UTF8);
+                }
+                catch
+                {
+                    // fallback to default encoding
+                    json = System.IO.File.ReadAllText(dataPath, Encoding.Default);
+                }
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                try
+                {
+                    return JsonSerializer.Deserialize<List<UserModel>>(json, options) ?? new List<UserModel>();
+                }
+                catch (Exception ex)
+                {
+                    // Try to clean common problematic characters and retry
+                    var cleaned = new string(json.Where(c => !char.IsControl(c) || c == '\r' || c == '\n' || c == '\t').ToArray());
+                    try
+                    {
+                        return JsonSerializer.Deserialize<List<UserModel>>(cleaned, options) ?? new List<UserModel>();
+                    }
+                    catch (Exception inner)
+                    {
+                        error = $"Deserialization failed: {ex.Message}; retry failed: {inner.Message}";
+                        return new List<UserModel>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return new List<UserModel>();
+            }
         }
 
         [HttpPost]
@@ -48,52 +110,48 @@ namespace TuProyecto.Controllers
         {
             try
             {
-                // Ruta al JSON de usuarios dentro de wwwroot/data/users.json
-                var dataPath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "users.json");
-                if (!System.IO.File.Exists(dataPath))
+                // Normalize inputs (trim)
+                var inputUser = (username ?? string.Empty).Trim();
+                var inputPass = (password ?? string.Empty).Trim();
+
+                var users = LoadUsersFromWebRoot(out var loadError);
+
+                if (!string.IsNullOrEmpty(loadError))
                 {
-                    ViewBag.ErrorMessage = "No se encontró el archivo de usuarios.";
+                    ViewBag.ErrorMessage = "Error al cargar usuarios: " + loadError;
                     return View();
                 }
 
-                // Leer el archivo intentando UTF-8 y hacer fallback a la codificación por defecto del sistema si es necesario
-                string json = string.Empty;
-                var bytes = System.IO.File.ReadAllBytes(dataPath);
-                try
+                // Find user by username OR email (case-insensitive)
+                var foundByNameOrEmail = users.FirstOrDefault(u =>
+                    string.Equals((u.Username ?? string.Empty).Trim(), inputUser, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals((u.Email ?? string.Empty).Trim(), inputUser, StringComparison.OrdinalIgnoreCase));
+
+                if (foundByNameOrEmail == null)
                 {
-                    json = Encoding.UTF8.GetString(bytes);
-                    // Quick check: if replacement character found, try fallback
-                    if (json.Contains("?"))
-                    {
-                        json = Encoding.Default.GetString(bytes);
-                    }
-                }
-                catch
-                {
-                    json = Encoding.Default.GetString(bytes);
+                    ViewBag.ErrorMessage = $"Usuario no encontrado. Usuarios cargados: {users.Count}";
+                    return View();
                 }
 
-                var users = JsonSerializer.Deserialize<List<UserModel>>(json) ?? new List<UserModel>();
-
-                var user = users.FirstOrDefault(u => u.Username == username && u.Password == password);
-                if (user != null)
+                // Check password
+                if (!string.Equals((foundByNameOrEmail.Password ?? string.Empty).Trim(), inputPass, StringComparison.Ordinal))
                 {
-                    // Store basic user info in session for demo purposes
-                    HttpContext.Session.SetString("LoggedInUser", user.Username);
-                    HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
-                    HttpContext.Session.SetString("LoggedInEmail", user.Email ?? "");
+                    ViewBag.ErrorMessage = "Contraseña incorrecta.";
+                    return View();
+                }
 
-                    TempData["SuccessMessage"] = $"Bienvenido, {user.DisplayName ?? user.Username}";
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ViewBag.ErrorMessage = "Usuario o contraseña incorrectos";
-                }
+                // Success
+                var user = foundByNameOrEmail;
+                HttpContext.Session.SetString("LoggedInUser", user.Username);
+                HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
+                HttpContext.Session.SetString("LoggedInEmail", user.Email ?? "");
+
+                TempData["LoginSuccess"] = $"Bienvenido, {user.DisplayName ?? user.Username}";
+                return RedirectToAction("Index", "Home");
             }
             catch (System.Exception ex)
             {
-                ViewBag.ErrorMessage = "Error al validar el usuario.";
+                ViewBag.ErrorMessage = "Error al validar el usuario: " + ex.Message;
             }
 
             return View();

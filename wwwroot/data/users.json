@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "Username": "claudia",
     "Password": "1234",
@@ -43,5 +43,25 @@
     "Username": "Angel",
     "Password": "123456789",
     "Email": "angel-2@gmail.com"
+  },
+  {
+    "Username": "Debian",
+    "Password": "1234",
+    "Email": "deb@gmail.com"
+  },
+  {
+    "Username": "pedro",
+    "Password": "1234",
+    "Email": "pedro@gmail.com"
+  },
+  {
+    "Username": "juan",
+    "Password": "1234",
+    "Email": "juan@gmail.com"
+  },
+  {
+    "Username": "sergio",
+    "Password": "1234",
+    "Email": "ser@gmail.com"
   }
 ]

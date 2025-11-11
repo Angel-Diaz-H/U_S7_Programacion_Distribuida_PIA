@@ -26,6 +26,9 @@
         
         
         <form method="post" asp-action="Register" asp-controller="Account">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="formType" value="register" />
+
             <div class="mb-3">
                 <label for="username" class="form-label fw-semibold">Usuario</label>
                 <input id="username" name="username" class="form-control form-control-lg" placeholder="Ej. JuanPerez" required />
