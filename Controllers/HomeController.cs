@@ -366,7 +366,14 @@ namespace TuProyecto.Controllers
         {
             HttpContext.Session.Remove("LoggedInUser");
             HttpContext.Session.Remove("LoggedInDisplayName");
-            return RedirectToAction("Index");
+            HttpContext.Session.Remove("LoggedInEmail");
+
+            // Clear any auth-related TempData to avoid showing previous success messages after logout
+            if (TempData.ContainsKey("LoginSuccess")) TempData.Remove("LoginSuccess");
+            if (TempData.ContainsKey("RegistrationSuccess")) TempData.Remove("RegistrationSuccess");
+            if (TempData.ContainsKey("RegistrationError")) TempData.Remove("RegistrationError");
+
+            return RedirectToAction("IniciarSesion");
         }
 
         // Acción para obtener disponibilidad por fecha y sucursal
