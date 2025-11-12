@@ -15,11 +15,11 @@
             <input type="hidden" name="id" value="@o.Id" />
             <div class="mb-3">
                 <label class="form-label">Sucursal</label>
-                <input class="form-control" value="@o.BranchName" readonly />
+                <input class="form-control" value="@o.BranchName" readonly style="background:#f6f6f6; color:#4b5563;" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Fecha</label>
-                <input class="form-control" value="@o.Date" readonly />
+                <input class="form-control" value="@o.Date" readonly style="background:#f6f6f6; color:#4b5563;" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Hora</label>
@@ -71,7 +71,12 @@
             notes: data.get('notes') || ''
         };
         const res = await fetch('/Home/EditOrderSubmit', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        if (res.ok) location.reload();
+        if (res.ok) {
+            // prefer existing global showToast if available
+            try{ if (window.showToast) window.showToast('Reservación actualizada', true); } catch(e){}
+            // hide modal handled by outer code which will reload; ensure a short delay so user sees toast
+            setTimeout(()=> location.reload(), 900);
+        }
         else {
             const txt = await res.text();
             alert('Error: ' + txt);

@@ -635,3 +635,84 @@ n    .gift-carousel-lg .carousel-caption {
 .btn-normal.btn-outline {
     padding: 8px 16px !important;
 }
+
+/* Order cards & actions */
+.order-card {
+    border: 1px solid rgba(15,87,76,0.08);
+    box-shadow: 0 6px 18px rgba(15,87,76,0.06);
+    padding: 18px;
+    border-radius: 14px;
+    background: #fff;
+}
+.order-card h5 { margin-bottom: 6px; color: #0f574c; font-weight: 700; }
+.order-meta { color: #6b7280; font-size: 0.95rem; margin-top: 6px; }
+.order-actions { display: flex; gap: 8px; align-items: center; }
+
+/* Ensure order-actions use visible bootstrap colors if variant classes are present */
+.order-actions .btn-success {
+    background-color: #16a34a !important;
+    border-color: #16a34a !important;
+    color: #ffffff !important;
+}
+.order-actions .btn-success:hover {
+    background-color: #128c3f !important;
+    border-color: #128c3f !important;
+}
+
+.order-actions .btn-secondary {
+    background-color: #6b7280 !important;
+    border-color: #6b7280 !important;
+    color: #ffffff !important;
+}
+.order-actions .btn-secondary:hover {
+    background-color: #565b62 !important;
+    border-color: #565b62 !important;
+}
+
+.order-actions .btn-danger {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+.order-actions .btn-danger:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* Keep previous css for .btn-edit/.btn-cancel/.btn-delete as fallback if those classes used */
+.btn-edit {
+    background-color: #1f9d55; /* green fallback */
+    color: #ffffff;
+    border: 1px solid rgba(31,157,85,0.15);
+}
+.btn-edit:hover { background-color: #158a4a; }
+
+.btn-cancel {
+    background-color: #6b7280; /* gray fallback */
+    color: #ffffff;
+    border: 1px solid rgba(107,114,128,0.15);
+}
+.btn-cancel:hover { background-color: #565b62; }
+
+.btn-delete {
+    background-color: #e5e7eb; /* light gray fallback */
+    color: #b91c1c;
+    border: 1px solid rgba(185,28,28,0.08);
+}
+.btn-delete:hover { background-color: #f8dede; }
+
+/* Toast notification styles */
+#toastContainer { display:flex; flex-direction:column; gap:10px; }
+.app-toast {
+    display:flex; align-items:center; gap:10px; min-width:220px; max-width:360px;
+    padding:10px 14px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.18);
+    transform: translateY(-10px) scale(0.98); opacity:0; transition: all 240ms ease;
+}
+.app-toast.visible { transform: translateY(0) scale(1); opacity:1; }
+.app-toast-success { background: linear-gradient(90deg,#e6f8ef,#dff3ea); color:#07503b; }
+.app-toast-error { background: linear-gradient(90deg,#fff1f0,#ffecec); color:#7a1f1f; }
+.app-toast-icon { font-weight:700; font-size:18px; background: rgba(255,255,255,0.6); padding:6px 8px; border-radius:8px; }
+.app-toast-message { font-weight:600; }
+
+/* ensure inputs and text show accents properly (font is UTF-8 aware) */
+body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }

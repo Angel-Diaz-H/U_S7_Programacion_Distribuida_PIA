@@ -1,28 +1,41 @@
 ﻿[
   {
-    "Id": 2,
+    "Id": 7,
     "Username": "rau",
     "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 3,
-    "BranchName": "Bowlly\u0027s Zapopan",
-    "Date": "2025-11-13",
-    "Hour": "20:00",
-    "Persons": 19,
-    "Notes": "S\u00ED ir\u00E9",
-    "CreatedAt": "2025-11-12T21:07:21.7432565Z",
-    "Status": "cancelled"
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
+    "Date": "2025-11-14",
+    "Hour": "18:00",
+    "Persons": 12,
+    "Notes": "",
+    "CreatedAt": "2025-11-12T21:59:25.8082443Z",
+    "Status": "active"
   },
   {
-    "Id": 3,
+    "Id": 8,
     "Username": "rau",
     "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 8,
-    "BranchName": "Bowlly\u0027s Tijuana Centro",
-    "Date": "2025-11-20",
-    "Hour": "20:00",
-    "Persons": 20,
-    "Notes": "Prueba 1",
-    "CreatedAt": "2025-11-12T21:07:41.4707156Z",
+    "BranchId": 11,
+    "BranchName": "Bowlly\u0027s Valle Oriente",
+    "Date": "2025-11-17",
+    "Hour": "19:00",
+    "Persons": 1,
+    "Notes": "",
+    "CreatedAt": "2025-11-12T21:59:39.396814Z",
+    "Status": "active"
+  },
+  {
+    "Id": 9,
+    "Username": "rau",
+    "DisplayName": "Ra\u00FAl P\u00E9rez",
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
+    "Date": "2025-11-15",
+    "Hour": "19:00",
+    "Persons": 3,
+    "Notes": "",
+    "CreatedAt": "2025-11-12T22:01:30.1537287Z",
     "Status": "active"
   }
 ]

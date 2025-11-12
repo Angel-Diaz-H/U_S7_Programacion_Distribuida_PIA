@@ -3,6 +3,13 @@
     Layout = null;
     var active = ViewData["ActiveOrders"] as IEnumerable<OrderModel> ?? Enumerable.Empty<OrderModel>();
     var past = ViewData["PastOrders"] as IEnumerable<OrderModel> ?? Enumerable.Empty<OrderModel>();
+
+    string FormatDate(string d)
+    {
+        if (string.IsNullOrWhiteSpace(d)) return d;
+        if (DateOnly.TryParse(d, out var dt)) return dt.ToString("dd/MM/yyyy");
+        return d;
+    }
 }
 
 <div class="my-orders">
@@ -17,16 +24,16 @@
             @foreach(var o in active)
             {
                 <div class="col-md-6">
-                    <div class="card shadow-sm p-3 rounded-lg">
+                    <div class="order-card">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h5 class="mb-1">@o.BranchName</h5>
-                                <div class="text-muted">Fecha: @o.Date  · Hora: @o.Hour</div>
-                                <div class="text-muted">Personas: @o.Persons</div>
+                                <h5>@o.BranchName</h5>
+                                <div class="order-meta">Fecha: <strong>@FormatDate(o.Date)</strong> · Hora: <strong>@o.Hour</strong></div>
+                                <div class="order-meta">Personas: <strong>@o.Persons</strong></div>
                             </div>
-                            <div class="text-end">
-                                <button class="btn btn-sm btn-outline-primary me-2" onclick="openEdit(@o.Id)">Editar</button>
-                                <button class="btn btn-sm btn-outline-warning" onclick="cancelOrder(@o.Id)">Cancelar</button>
+                            <div class="order-actions">
+                                <button class="btn btn-success btn-pill-sm my-2" onclick="openEdit(@o.Id)">Editar</button>
+                                <button class="btn btn-secondary btn-pill-sm" onclick="cancelOrder(@o.Id)">Cancelar</button>
                             </div>
                         </div>
                     </div>
@@ -46,15 +53,15 @@
             @foreach(var o in past)
             {
                 <div class="col-md-6">
-                    <div class="card bg-light p-3 rounded-lg">
+                    <div class="order-card bg-light">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="mb-1">@o.BranchName</h6>
-                                <div class="text-muted">Fecha: @o.Date · Hora: @o.Hour</div>
-                                <div class="text-muted">Estado: @(string.IsNullOrWhiteSpace(o.Status) ? "active" : o.Status)</div>
+                                <h6>@o.BranchName</h6>
+                                <div class="order-meta">Fecha: <strong>@FormatDate(o.Date)</strong> · Hora: <strong>@o.Hour</strong></div>
+                                <div class="order-meta">Estado: <span class="order-state">@((string.IsNullOrWhiteSpace(o.Status) ? "active" : o.Status))</span></div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteOrder(@o.Id)">Eliminar</button>
+                                <button class="btn btn-danger btn-pill-sm" onclick="deleteOrder(@o.Id)">Eliminar</button>
                             </div>
                         </div>
                     </div>
