@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Aviso de Privacidad";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card p-5">
+                    <h1 class="mb-3">Aviso de Privacidad.</h1>
+                    <p class="text-muted">Última actualización: @DateTime.Now.ToString("dd/MM/yyyy").</p>
+
+                    <h3>1. Responsable del tratamiento de datos.</h3>
+                    <p>Bowlly's S.A. de C.V. (en adelante "Bowlly's" o "nosotros") es responsable del tratamiento de los datos personales que recabamos a través de este sitio web y en nuestras sucursales.</p>
+
+                    <h3>2. Datos que recabamos.</h3>
+                    <p>Podemos recabar datos personales que incluyen nombre completo, correo electrónico, nombre de usuario, fecha de nacimiento y datos necesarios para procesar reservas u órdenes. No solicitamos datos sensibles en el proceso de registro.</p>
+
+                    <h3>3. Finalidad.</h3>
+                    <p>Los datos se utilizan para: crear y administrar cuentas de usuario, procesar reservas y pedidos, enviar confirmaciones y comunicaciones relacionadas con el servicio, y atender solicitudes de soporte.</p>
+
+                    <h3>4. Conservación.</h3>
+                    <p>Conservamos los datos durante el tiempo necesario para cumplir con las finalidades descritas y cuando la ley lo requiera. En caso de solicitud de eliminación, podremos eliminar datos conforme a la normativa aplicable.</p>
+
+                    <h3>5. Compartir datos.</h3>
+                    <p>No compartimos tus datos personales con terceros para fines comerciales sin tu consentimiento. Podemos compartir información con proveedores que nos ayudan a operar el servicio (por ejemplo, servicios de correo) y cuando la ley lo exija.</p>
+
+                    <h3>6. Derechos ARCO.</h3>
+                    <p>Tienes derecho a acceder, rectificar, cancelar u oponerte al tratamiento de tus datos (derechos ARCO). Para ejercer estos derechos, contáctanos a: <a href="mailto:privacy@bowllys.com">privacy@bowllys.com</a>.</p>
+
+                    <h3>7. Seguridad.</h3>
+                    <p>Implementamos medidas de seguridad razonables para proteger tus datos. Dado el carácter demo de este sitio, recomendamos no almacenar información sensible en cuentas de prueba.</p>
+
+                    <h3>8. Cambios al aviso.</h3>
+                    <p>Podemos actualizar este aviso; cualquier cambio será publicado en esta página con la fecha de modificación.</p>
+
+                    <a class="btn btn-normal btn-primary mt-4" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

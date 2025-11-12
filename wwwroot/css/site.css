@@ -621,3 +621,17 @@ n    .gift-carousel-lg .carousel-caption {
         background: rgba(0,0,0,0.45);
         margin-top: 8px;
 }
+
+/* Utility: normal sized button for pages where full-pill large buttons are too big */
+.btn-normal {
+    padding: 8px 16px !important; /* smaller horizontal padding */
+    font-size: 0.95rem !important;
+    border-radius: 8px !important; /* less pill-like */
+    height: auto !important;
+    line-height: 1.2 !important;
+}
+
+/* Provide an outline variant if needed */
+.btn-normal.btn-outline {
+    padding: 8px 16px !important;
+}

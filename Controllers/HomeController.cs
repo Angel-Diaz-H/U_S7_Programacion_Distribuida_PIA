@@ -168,6 +168,12 @@ namespace TuProyecto.Controllers
             return View();
         }
 
+        // Página del aviso de privacidad
+        public IActionResult AvisoPrivacidad()
+        {
+            return View();
+        }
+
         // Acción para la vista Nosotros
         public IActionResult Nosotros()
         {
