@@ -14,16 +14,42 @@ namespace TuProyecto.Controllers
         // Simple in-memory branches list used by Sucursales/Ordenar
         private static readonly List<BranchModel> _branches = new()
         {
+            // Nuevo León
             new BranchModel{ Id=1, StateKey="nuevoleon", Name="Bowlly's San Pedro" },
             new BranchModel{ Id=2, StateKey="nuevoleon", Name="Bowlly's Monterrey Centro" },
+            new BranchModel{ Id=11, StateKey="nuevoleon", Name="Bowlly's Valle Oriente" },
+
+            // Jalisco
             new BranchModel{ Id=3, StateKey="jalisco", Name="Bowlly's Zapopan" },
+            new BranchModel{ Id=12, StateKey="jalisco", Name="Bowlly's Guadalajara Centro" },
+
+            // Chihuahua
             new BranchModel{ Id=4, StateKey="chihuahua", Name="Bowlly's Chihuahua Centro" },
+            new BranchModel{ Id=13, StateKey="chihuahua", Name="Bowlly's Norte" },
+
+            // Coahuila
             new BranchModel{ Id=5, StateKey="coahuila", Name="Bowlly's Saltillo Centro" },
+            new BranchModel{ Id=14, StateKey="coahuila", Name="Bowlly's Ramos Arizpe" },
+
+            // Querétaro
             new BranchModel{ Id=6, StateKey="queretaro", Name="Bowlly's Querétaro Centro" },
+            new BranchModel{ Id=15, StateKey="queretaro", Name="Bowlly's Juriquilla" },
+
+            // Tamaulipas
             new BranchModel{ Id=7, StateKey="tamaulipas", Name="Bowlly's Tampico" },
+            new BranchModel{ Id=16, StateKey="tamaulipas", Name="Bowlly's Madero" },
+
+            // Baja California
             new BranchModel{ Id=8, StateKey="bajacalifornia", Name="Bowlly's Tijuana Centro" },
+            new BranchModel{ Id=17, StateKey="bajacalifornia", Name="Bowlly's Rosarito" },
+
+            // Veracruz
             new BranchModel{ Id=9, StateKey="veracruz", Name="Bowlly's Buenavista" },
-            new BranchModel{ Id=10, StateKey="quintanaroo", Name="Bowlly's Cancún Centro" }
+            new BranchModel{ Id=18, StateKey="veracruz", Name="Bowlly's Boca del Río" },
+
+            // Quintana Roo
+            new BranchModel{ Id=10, StateKey="quintanaroo", Name="Bowlly's Cancún Centro" },
+            new BranchModel{ Id=19, StateKey="quintanaroo", Name="Bowlly's Playa del Carmen" }
         };
 
         public HomeController(IWebHostEnvironment env)

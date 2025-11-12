@@ -2,13 +2,13 @@
   {
     "Id": 1,
     "Username": "angel",
-    "DisplayName": "angel diaz",
+    "DisplayName": "Angel Diaz",
     "BranchId": 1,
     "BranchName": "Bowlly\u0027s San Pedro",
     "Date": "2025-11-12",
-    "Hour": "17:00",
-    "Persons": 11,
+    "Hour": "13:00",
+    "Persons": 1,
     "Notes": "",
-    "CreatedAt": "2025-11-12T17:04:11.5747485Z"
+    "CreatedAt": "2025-11-12T17:48:46.0191723Z"
   }
-]x
+]
