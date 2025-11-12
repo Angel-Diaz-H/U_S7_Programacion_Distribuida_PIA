@@ -1,5 +1,12 @@
 ﻿@{
     ViewBag.Title = "CrearCuenta";
+
+    string vFirst = ViewBag.InputFirstName ?? string.Empty;
+    string vMiddle = ViewBag.InputMiddleName ?? string.Empty;
+    string vLast = ViewBag.InputLastName ?? string.Empty;
+    string vDob = ViewBag.InputDateOfBirth ?? string.Empty;
+    string vUsername = ViewBag.InputUsername ?? string.Empty;
+    string vEmail = ViewBag.InputEmail ?? string.Empty;
 }
 
 @section Styles {
@@ -25,59 +32,143 @@
         }
         
         
-        <form method="post" asp-action="Register" asp-controller="Account">
+        <form id="registerForm" method="post" asp-action="Register" asp-controller="Account" novalidate>
             @Html.AntiForgeryToken()
             <input type="hidden" name="formType" value="register" />
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="firstName" class="form-label fw-semibold">Nombres</label>
-                    <input id="firstName" name="firstName" class="form-control form-control-lg" placeholder="Juan Carlos" required />
+                    <input id="firstName" name="firstName" value="@vFirst" class="form-control form-control-lg" placeholder="Juan Carlos" required minlength="2" maxlength="50" />
+                    <div class="invalid-feedback">Ingresa tus nombres (2-50 caracteres).</div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="lastName" class="form-label fw-semibold">Apellido paterno</label>
-                    <input id="lastName" name="lastName" class="form-control form-control-lg" placeholder="Pérez" required />
+                    <input id="lastName" name="lastName" value="@vLast" class="form-control form-control-lg" placeholder="Pérez" required minlength="2" maxlength="50" />
+                    <div class="invalid-feedback">Ingresa tu apellido paterno (2-50 caracteres).</div>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="middleName" class="form-label fw-semibold">Apellido materno (opcional)</label>
-                <input id="middleName" name="middleName" class="form-control form-control-lg" placeholder="García" />
+                <input id="middleName" name="middleName" value="@vMiddle" class="form-control form-control-lg" placeholder="García" maxlength="50" />
+                <div class="invalid-feedback">Apellido materno inválido.</div>
             </div>
 
             <div class="mb-3">
                 <label for="dateOfBirth" class="form-label fw-semibold">Fecha de nacimiento</label>
-                <input id="dateOfBirth" name="dateOfBirth" type="date" class="form-control form-control-lg" required />
+                <input id="dateOfBirth" name="dateOfBirth" type="date" value="@vDob" class="form-control form-control-lg" required />
+                <div class="invalid-feedback">Ingresa una fecha válida. Debes tener al menos 12 años.</div>
             </div>
 
             <div class="mb-3">
                 <label for="username" class="form-label fw-semibold">Usuario</label>
-                <input id="username" name="username" class="form-control form-control-lg" placeholder="Ej. JuanPerez" required />
+                <input id="username" name="username" value="@vUsername" class="form-control form-control-lg" placeholder="Ej. JuanPerez" required minlength="3" maxlength="20" pattern="^[a-zA-Z0-9_-]{3,20}$" title="Solo letras, números, guiones y guión bajo (3-20)." />
+                <div class="form-text">Usa 3-20 caracteres. Solo letras, números, guion (-) y guion bajo (_).</div>
+                <div class="invalid-feedback">Usuario inválido o ya en uso.</div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
-                <input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="ejemplo@correo.com" required />
+                <input id="email" name="email" type="email" value="@vEmail" class="form-control form-control-lg" placeholder="ejemplo@correo.com" required maxlength="100" />
+                <div class="invalid-feedback">Ingresa un correo electrónico válido.</div>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label fw-semibold">Contraseña</label>
-                <input id="password" name="password" type="password" class="form-control form-control-lg" placeholder="********" required />
+                <input id="password" name="password" type="password" class="form-control form-control-lg" placeholder="********" required minlength="8" aria-describedby="passwordHelp" />
+                <div id="passwordHelp" class="form-text">Mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un símbolo.</div>
+                <div class="invalid-feedback">Contraseña débil. Revisa los requisitos.</div>
+
+                <div class="progress mt-2" style="height:8px;">
+                    <div id="pwStrength" class="progress-bar" role="progressbar" style="width:0%;"></div>
+                </div>
             </div>
 
             <div class="mb-4">
                 <label for="confirmPassword" class="form-label fw-semibold">Confirmar Contraseña</label>
                 <input id="confirmPassword" name="confirmPassword" type="password" class="form-control form-control-lg" placeholder="********" required />
+                <div class="invalid-feedback">Las contraseñas no coinciden.</div>
             </div>
 
-            <button type="submit" class="btn btn-success w-100 py-2 fw-bold mb-2">
+            <button id="submitBtn" type="submit" class="btn btn-success w-100 py-2 fw-bold mb-2">
                 Registrarme
             </button>
         </form>
 
         <a asp-controller="Home" asp-action="IniciarSesion" class="btn btn-outline-secondary w-100 py-2 fw-bold mt-2">
-            Ya tengo una cuenta, iniciar 
+            Iniciar sesión
         </a>
 
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        (function(){
+            const form = document.getElementById('registerForm');
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('confirmPassword');
+            const pwBar = document.getElementById('pwStrength');
+
+            function passwordStrength(pw){
+                let score = 0;
+                if(!pw) return 0;
+                if(pw.length >= 8) score += 1;
+                if(/[A-Z]/.test(pw)) score += 1;
+                if(/[a-z]/.test(pw)) score += 1;
+                if(/[0-9]/.test(pw)) score += 1;
+                if(/[^A-Za-z0-9]/.test(pw)) score += 1;
+                return score; // 0-5
+            }
+
+            function updatePwBar(){
+                const score = passwordStrength(password.value);
+                const percent = (score/5)*100;
+                pwBar.style.width = percent + '%';
+                if(score <= 2){ pwBar.className = 'progress-bar bg-danger'; }
+                else if(score === 3){ pwBar.className = 'progress-bar bg-warning'; }
+                else { pwBar.className = 'progress-bar bg-success'; }
+            }
+
+            password.addEventListener('input', updatePwBar);
+
+            form.addEventListener('submit', function(e){
+                // Reset native validation states
+                const inputs = form.querySelectorAll('input');
+                inputs.forEach(i => i.classList.remove('is-invalid'));
+
+                // Client-side checks
+                let valid = true;
+
+                // HTML5 validity
+                if(!form.checkValidity()){
+                    valid = false;
+                    form.querySelectorAll(':invalid').forEach(el => el.classList.add('is-invalid'));
+                }
+
+                // password strength
+                const pw = password.value;
+                const strength = passwordStrength(pw);
+                if(strength < 4){ // require at least 4/5
+                    password.classList.add('is-invalid');
+                    valid = false;
+                }
+
+                // confirm password
+                if(pw !== confirm.value){
+                    confirm.classList.add('is-invalid');
+                    valid = false;
+                }
+
+                if(!valid){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+
+                // Allow submit; server-side will perform final validation
+            });
+        })();
+    </script>
+}

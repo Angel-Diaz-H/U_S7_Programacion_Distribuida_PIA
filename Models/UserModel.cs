@@ -13,6 +13,9 @@ namespace TuProyecto.Models
         public string? LastName { get; set; }
         public string? DateOfBirth { get; set; } // yyyy-MM-dd
 
+        // Stored full name (formatted) - included in JSON
+        public string? FullName { get; set; }
+
         [JsonIgnore]
         public string? DisplayName
         {
@@ -21,7 +24,7 @@ namespace TuProyecto.Models
                 var parts = new[] { FirstName, MiddleName, LastName }
                             .Where(p => !string.IsNullOrWhiteSpace(p))
                             .Select(p => p!.Trim()).ToArray();
-                if (parts.Length == 0) return null;
+                if (parts.Length == 0) return FullName ?? null;
                 return string.Join(' ', parts);
             }
         }

@@ -6,7 +6,8 @@
     "FirstName": "claudia",
     "MiddleName": null,
     "LastName": "campos",
-    "DateOfBirth": "2013-01-01"
+    "DateOfBirth": "2013-01-01",
+    "FullName": null
   },
   {
     "Username": "angel",
@@ -15,6 +16,27 @@
     "FirstName": "angel",
     "MiddleName": null,
     "LastName": "diaz",
-    "DateOfBirth": "2000-01-01"
+    "DateOfBirth": "2000-01-01",
+    "FullName": null
+  },
+  {
+    "Username": "keencito",
+    "Password": "debian.UBUNTU#1!",
+    "Email": "keen@gmail.com",
+    "FirstName": "keencito",
+    "MiddleName": null,
+    "LastName": "díaz",
+    "DateOfBirth": "2001-04-27",
+    "FullName": null
+  },
+  {
+    "Username": "aury",
+    "Password": "123asdASD!",
+    "Email": "aury@gmail.com",
+    "FirstName": "Aaron",
+    "MiddleName": null,
+    "LastName": "Gonzalez",
+    "DateOfBirth": "2001-01-22",
+    "FullName": "Aaron Gonzalez"
   }
 ]

@@ -7,6 +7,7 @@ using TuProyecto.Models;
 using System;
 using System.Globalization;
 using System.Text.Encodings.Web;
+using System.Linq;
 
 namespace TuProyecto.Controllers
 {
@@ -76,12 +77,45 @@ namespace TuProyecto.Controllers
             return View("~/Views/Home/CrearCuenta.cshtml");
         }
 
+        private static string ToTitleCaseSmart(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return input ?? string.Empty;
+            input = input.Trim();
+            // Lower common small words that should remain lowercase unless first
+            var lowerWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "de", "la", "las", "del", "los", "y", "e" };
+
+            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var p = parts[i];
+                if (p.Length <= 3 && lowerWords.Contains(p.ToLowerInvariant()) && i != 0)
+                {
+                    parts[i] = p.ToLowerInvariant();
+                }
+                else
+                {
+                    // capitalize first letter, keep rest lower
+                    parts[i] = char.ToUpper(p[0]) + p.Substring(1).ToLowerInvariant();
+                }
+            }
+
+            return string.Join(' ', parts);
+        }
+
         // 🔹 POST Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Register(string username, string email, string password, string confirmPassword,
                                       string firstName, string lastName, string middleName, string dateOfBirth)
         {
+            // Preserve submitted values in ViewBag to avoid losing progress (except password fields)
+            ViewBag.InputUsername = username;
+            ViewBag.InputEmail = email;
+            ViewBag.InputFirstName = firstName;
+            ViewBag.InputMiddleName = middleName;
+            ViewBag.InputLastName = lastName;
+            ViewBag.InputDateOfBirth = dateOfBirth;
+
             // Basic required fields
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email)
                 || string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(dateOfBirth))
@@ -146,15 +180,22 @@ namespace TuProyecto.Controllers
                 return View("~/Views/Home/CrearCuenta.cshtml");
             }
 
+            // Format name parts and compute full name
+            var f = ToTitleCaseSmart(firstName ?? string.Empty);
+            var m = string.IsNullOrWhiteSpace(middleName) ? null : ToTitleCaseSmart(middleName!);
+            var l = ToTitleCaseSmart(lastName ?? string.Empty);
+            var full = string.Join(' ', new[] { f, m, l }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
             var newUser = new UserModel
             {
                 Username = username.Trim(),
                 Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim(),
                 Password = password.Trim(),
-                FirstName = firstName.Trim(),
-                LastName = lastName.Trim(),
-                MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName.Trim(),
-                DateOfBirth = dob.ToString("yyyy-MM-dd")
+                FirstName = f,
+                LastName = l,
+                MiddleName = m,
+                DateOfBirth = dob.ToString("yyyy-MM-dd"),
+                FullName = full
             };
 
             users.Add(newUser);
