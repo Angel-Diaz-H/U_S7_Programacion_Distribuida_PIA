@@ -11,6 +11,8 @@ namespace TuProyecto.Controllers
     {
         private readonly IWebHostEnvironment _env;
 
+        private static readonly object _ordersLock = new object();
+
         // Simple in-memory branches list used by Sucursales/Ordenar
         private static readonly List<BranchModel> _branches = new()
         {
@@ -57,6 +59,142 @@ namespace TuProyecto.Controllers
             _env = env;
         }
 
+        private string GetOrdersPath() => Path.Combine(_env.WebRootPath ?? string.Empty, "data", "orders.json");
+        private string GetOrdersDebugPath() => Path.Combine(_env.WebRootPath ?? string.Empty, "data", "orders_debug.log");
+
+        private void LogOrderActivity(string text)
+        {
+            try
+            {
+                var path = GetOrdersDebugPath();
+                var dir = Path.GetDirectoryName(path) ?? string.Empty;
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                var entry = DateTime.UtcNow.ToString("o") + " - " + text + "\n";
+                lock (_ordersLock)
+                {
+                    System.IO.File.AppendAllText(path, entry, Encoding.UTF8);
+                }
+            }
+            catch
+            {
+                // swallow logging errors
+            }
+        }
+
+        // Read orders without locking (used for availability); lock when writing
+        private List<OrderModel> ReadOrdersSafe()
+        {
+            var ordersPath = GetOrdersPath();
+            try
+            {
+                if (!System.IO.File.Exists(ordersPath)) return new List<OrderModel>();
+                var json = System.IO.File.ReadAllText(ordersPath, Encoding.UTF8);
+                return JsonSerializer.Deserialize<List<OrderModel>>(json) ?? new List<OrderModel>();
+            }
+            catch
+            {
+                return new List<OrderModel>();
+            }
+        }
+
+        // Append order atomically using exclusive FileStream to avoid cross-process overwrite
+        private bool AppendOrderAtomic(OrderModel newOrder, out string? error)
+        {
+            error = null;
+            var ordersPath = GetOrdersPath();
+            var dir = Path.GetDirectoryName(ordersPath) ?? string.Empty;
+            try
+            {
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+                using (var fs = new FileStream(ordersPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                {
+                    List<OrderModel> orders = new List<OrderModel>();
+                    if (fs.Length > 0)
+                    {
+                        fs.Seek(0, SeekOrigin.Begin);
+                        using (var sr = new StreamReader(fs, Encoding.UTF8, leaveOpen: true))
+                        {
+                            var existing = sr.ReadToEnd();
+                            try { orders = JsonSerializer.Deserialize<List<OrderModel>>(existing) ?? new List<OrderModel>(); } catch { orders = new List<OrderModel>(); }
+                        }
+                    }
+
+                    // normalize username and date for comparisons
+                    var usernameNorm = (newOrder.Username ?? string.Empty).Trim();
+                    var reservationDateStr = newOrder.Date;
+
+                    // check exact duplicate
+                    var duplicateExact = orders.Any(o => string.Equals((o.Username ?? string.Empty).Trim(), usernameNorm, StringComparison.OrdinalIgnoreCase)
+                                                         && o.Date == reservationDateStr && o.Hour == newOrder.Hour && o.BranchId == newOrder.BranchId);
+                    if (duplicateExact)
+                    {
+                        error = "Ya existe una reservación idéntica.";
+                        LogOrderActivity($"REJECT duplicateExact username={usernameNorm} date={reservationDateStr} hour={newOrder.Hour} branch={newOrder.BranchId}");
+                        return false;
+                    }
+
+                    // check same day per user (use normalized username)
+                    var existingSameDay = orders.Any(o => string.Equals((o.Username ?? string.Empty).Trim(), usernameNorm, StringComparison.OrdinalIgnoreCase)
+                                                          && o.Date == reservationDateStr);
+                    if (existingSameDay)
+                    {
+                        error = "Ya tienes una reservación para esa fecha. No puedes reservar más de una vez por día.";
+                        LogOrderActivity($"REJECT existingSameDay username={usernameNorm} date={reservationDateStr}");
+                        return false;
+                    }
+
+                    // check max 3 active distinct future dates
+                    var todayStr = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
+                    var futureReservations = orders.Where(o => string.Equals((o.Username ?? string.Empty).Trim(), usernameNorm, StringComparison.OrdinalIgnoreCase)
+                                                              && String.Compare(o.Date, todayStr) >= 0)
+                                                   .Select(o => o.Date)
+                                                   .Distinct()
+                                                   .Count();
+                    LogOrderActivity($"INFO beforeInsert username={usernameNorm} existingOrders={orders.Count} futureDistinctDates={futureReservations}");
+                    if (futureReservations >= 3)
+                    {
+                        error = "Has alcanzado el límite de 3 reservaciones activas. Cancela alguna para crear una nueva.";
+                        LogOrderActivity($"REJECT futureLimit username={usernameNorm} futureDistinctDates={futureReservations}");
+                        return false;
+                    }
+
+                    // check slot capacity
+                    var sameSlotCount = orders.Count(o => o.Date == reservationDateStr && o.Hour == newOrder.Hour);
+                    if (sameSlotCount >= 10)
+                    {
+                        error = "Lo sentimos, ya se alcanzó el límite de 10 reservaciones para esa hora.";
+                        LogOrderActivity($"REJECT slotFull date={reservationDateStr} hour={newOrder.Hour} count={sameSlotCount}");
+                        return false;
+                    }
+
+                    // assign next id safely
+                    var nextId = orders.Any() ? orders.Max(o => o.Id) + 1 : 1;
+                    newOrder.Id = nextId;
+                    orders.Add(newOrder);
+
+                    // append and write back: overwrite file from start
+                    fs.SetLength(0);
+                    fs.Seek(0, SeekOrigin.Begin);
+                    using (var sw = new StreamWriter(fs, Encoding.UTF8, leaveOpen: true))
+                    {
+                        var write = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true });
+                        sw.Write(write);
+                        sw.Flush();
+                    }
+                }
+
+                LogOrderActivity($"OK inserted username={newOrder.Username} id={newOrder.Id} date={newOrder.Date} hour={newOrder.Hour} branch={newOrder.BranchId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                LogOrderActivity($"ERROR append username={newOrder.Username} ex={ex.Message}");
+                return false;
+            }
+        }
+
         // Página principal
         public IActionResult Index()
         {
@@ -75,8 +213,8 @@ namespace TuProyecto.Controllers
             }
 
             // expose registration success if present
-            if (TempData.ContainsKey("RegistrationSuccess")) ViewBag.SuccessMessage = TempData["RegistrationSuccess"]; 
-            if (TempData.ContainsKey("RegistrationError")) ViewBag.ErrorMessage = TempData["RegistrationError"]; 
+            if (TempData.ContainsKey("RegistrationSuccess")) ViewBag.SuccessMessage = TempData["RegistrationSuccess"];
+            if (TempData.ContainsKey("RegistrationError")) ViewBag.ErrorMessage = TempData["RegistrationError"];
             if (TempData.ContainsKey("LoginSuccess")) ViewBag.SuccessMessage = TempData["LoginSuccess"];
             return View();
         }
@@ -255,7 +393,7 @@ namespace TuProyecto.Controllers
         [HttpPost]
         public IActionResult Ordenar(int branchId, string date, string hour, int persons = 1, string notes = "")
         {
-            var username = HttpContext.Session.GetString("LoggedInUser");
+            var username = (HttpContext.Session.GetString("LoggedInUser") ?? string.Empty).Trim();
             var display = HttpContext.Session.GetString("LoggedInDisplayName");
             if (string.IsNullOrEmpty(username))
             {
@@ -288,7 +426,7 @@ namespace TuProyecto.Controllers
                 return RedirectToAction("Ordenar");
             }
 
-            // NEW: max 15 days ahead
+            // max 15 days ahead
             var maxAllowed = today.AddDays(15);
             if (reservationDate > maxAllowed)
             {
@@ -303,75 +441,24 @@ namespace TuProyecto.Controllers
                 return RedirectToAction("Ordenar");
             }
 
-            // optional: prevent booking in the past (compare full DateTime)
+            // same-day must be at least now + 2 hours (minute-accurate)
             if (int.TryParse(hour.Substring(0, 2), out var hourInt))
             {
-                var reservationDateTime = new DateTime(reservationDate.Year, reservationDate.Month, reservationDate.Day, hourInt, 0, 0);
-                if (reservationDateTime < DateTime.Now)
+                var slotDateTime = new DateTime(reservationDate.Year, reservationDate.Month, reservationDate.Day, hourInt, 0, 0);
+                if (slotDateTime < DateTime.Now)
                 {
                     TempData["OrderError"] = "No puedes reservar en una fecha u hora pasadas.";
                     return RedirectToAction("Ordenar");
                 }
-
-                // NEW: require same-day reservations to be at least 2 hours ahead
-                var now = DateTime.Now;
-                if (reservationDate == DateOnly.FromDateTime(now))
+                if (reservationDate == DateOnly.FromDateTime(DateTime.Now))
                 {
-                    var earliestHour = now.AddHours(2).Hour;
-                    if (hourInt < earliestHour)
+                    var earliest = DateTime.Now.AddHours(2);
+                    if (slotDateTime < earliest)
                     {
                         TempData["OrderError"] = "Para reservas del mismo día, la hora debe ser al menos 2 horas después de la hora actual.";
                         return RedirectToAction("Ordenar");
                     }
                 }
-            }
-
-            // Load existing orders
-            var ordersPath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "orders.json");
-            List<OrderModel> orders = new();
-            if (System.IO.File.Exists(ordersPath))
-            {
-                try
-                {
-                    var bytes = System.IO.File.ReadAllBytes(ordersPath);
-                    var json = Encoding.UTF8.GetString(bytes);
-                    orders = JsonSerializer.Deserialize<List<OrderModel>>(json) ?? new List<OrderModel>();
-                }
-                catch
-                {
-                    // ignore and start empty
-                    orders = new List<OrderModel>();
-                }
-            }
-
-            // Rule: user cannot reserve more than once on the same date
-            var existingSameDay = orders.Any(o => string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase)
-                                                  && o.Date == reservationDate.ToString("yyyy-MM-dd"));
-            if (existingSameDay)
-            {
-                TempData["OrderError"] = "Ya tienes una reservación para esa fecha. No puedes reservar más de una vez por día.";
-                return RedirectToAction("Ordenar");
-            }
-
-            // Rule: user may have at most 3 active/future reservation dates
-            var todayStr = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
-            var futureReservations = orders.Where(o => string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase)
-                                                      && String.Compare(o.Date, todayStr) >= 0)
-                                           .Select(o => o.Date)
-                                           .Distinct()
-                                           .Count();
-            if (futureReservations >= 3)
-            {
-                TempData["OrderError"] = "Has alcanzado el límite de 3 reservaciones activas. Cancela alguna para crear una nueva.";
-                return RedirectToAction("Ordenar");
-            }
-
-            // Count reservations for same date and hour globally
-            var sameSlotCount = orders.Count(o => o.Date == reservationDate.ToString("yyyy-MM-dd") && o.Hour == hour);
-            if (sameSlotCount >= 10)
-            {
-                TempData["OrderError"] = "Lo sentimos, ya se alcanzó el límite de 10 reservaciones para esa hora.";
-                return RedirectToAction("Ordenar");
             }
 
             var branch = _branches.FirstOrDefault(b => b.Id == branchId);
@@ -383,7 +470,6 @@ namespace TuProyecto.Controllers
 
             var newOrder = new OrderModel
             {
-                Id = (orders.Count > 0) ? orders.Max(o => o.Id) + 1 : 1,
                 Username = username,
                 DisplayName = display,
                 BranchId = branch.Id,
@@ -395,29 +481,17 @@ namespace TuProyecto.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
-            orders.Add(newOrder);
-
-            // save file (ensure directory)
-            try
+            if (!AppendOrderAtomic(newOrder, out var err))
             {
-                var dir = System.IO.Path.GetDirectoryName(ordersPath) ?? string.Empty;
-                if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
-                var write = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true });
-                System.IO.File.WriteAllText(ordersPath, write, Encoding.UTF8);
-            }
-            catch
-            {
-                TempData["OrderError"] = "Error al guardar la orden.";
+                TempData["OrderError"] = err ?? "Error al guardar la orden.";
                 return RedirectToAction("Ordenar");
             }
 
-            // success - show modal on GET
             TempData["OrderSuccess"] = "Reservación confirmada";
             TempData["OrderInfo"] = JsonSerializer.Serialize(new { newOrder.Id, newOrder.BranchName, newOrder.Date, newOrder.Hour, newOrder.Persons });
-
             return RedirectToAction("Ordenar");
         }
-        
+
         // Demo account page showing session user info
         public IActionResult MiCuenta()
         {
@@ -454,7 +528,7 @@ namespace TuProyecto.Controllers
 
             return View();
         }
-        
+
         // POST: Edit account details (username + name parts). Email is readonly.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -527,7 +601,7 @@ namespace TuProyecto.Controllers
             HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
 
             TempData["EditSuccess"] = "Datos actualizados correctamente.";
-            return RedirectToAction("MiCuenta");
+            return RedirectToAction("Mi Cuenta");
         }
 
         // Logout demo
@@ -551,22 +625,7 @@ namespace TuProyecto.Controllers
         {
             if (string.IsNullOrEmpty(date)) return Json(new { success = false, message = "Fecha requerida" });
 
-            var ordersPath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "orders.json");
-            List<OrderModel> orders = new();
-            if (System.IO.File.Exists(ordersPath))
-            {
-                try
-                {
-                    var bytes = System.IO.File.ReadAllBytes(ordersPath);
-                    var json = Encoding.UTF8.GetString(bytes);
-                    orders = JsonSerializer.Deserialize<List<OrderModel>>(json) ?? new List<OrderModel>();
-                }
-                catch
-                {
-                    orders = new List<OrderModel>();
-                }
-            }
-
+            var orders = ReadOrdersSafe();
             var result = new Dictionary<string, int>();
             // hours from 09:00 to 20:00 (same as ViewData Hours)
             for (int h = 9; h < 21; h++)

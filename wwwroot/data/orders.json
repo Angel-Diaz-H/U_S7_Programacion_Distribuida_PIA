@@ -1,14 +1,38 @@
 ﻿[
   {
     "Id": 1,
-    "Username": "angel",
-    "DisplayName": "Angel Diaz",
-    "BranchId": 3,
-    "BranchName": "Bowlly\u0027s Zapopan",
+    "Username": "rau",
+    "DisplayName": "Ra\u00FAl P\u00E9rez",
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
     "Date": "2025-11-12",
-    "Hour": "13:00",
-    "Persons": 20,
+    "Hour": "15:00",
+    "Persons": 1,
     "Notes": "",
-    "CreatedAt": "2025-11-12T17:56:26.9215548Z"
+    "CreatedAt": "2025-11-12T18:43:23.8100435Z"
+  },
+  {
+    "Id": 2,
+    "Username": "rau",
+    "DisplayName": "Ra\u00FAl P\u00E9rez",
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
+    "Date": "2025-11-13",
+    "Hour": "09:00",
+    "Persons": 1,
+    "Notes": "",
+    "CreatedAt": "2025-11-12T18:55:30.5687895Z"
+  },
+  {
+    "Id": 3,
+    "Username": "rau",
+    "DisplayName": "Ra\u00FAl P\u00E9rez",
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
+    "Date": "2025-11-14",
+    "Hour": "09:00",
+    "Persons": 1,
+    "Notes": "",
+    "CreatedAt": "2025-11-12T18:56:41.0646973Z"
   }
 ]

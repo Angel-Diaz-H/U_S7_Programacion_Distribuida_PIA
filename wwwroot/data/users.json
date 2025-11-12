@@ -20,23 +20,13 @@
     "FullName": "Angel Diaz"
   },
   {
-    "Username": "keencito",
-    "Password": "debian.UBUNTU#1!",
-    "Email": "keen@gmail.com",
-    "FirstName": "keencito",
-    "MiddleName": null,
-    "LastName": "díaz",
-    "DateOfBirth": "2001-04-27",
-    "FullName": null
-  },
-  {
-    "Username": "aury",
+    "Username": "rau",
     "Password": "123asdASD!",
-    "Email": "aury@gmail.com",
-    "FirstName": "Aaron",
+    "Email": "raul@gmail.com",
+    "FirstName": "Raúl",
     "MiddleName": null,
-    "LastName": "Gonzalez",
-    "DateOfBirth": "2001-01-22",
-    "FullName": "Aaron Gonzalez"
+    "LastName": "Pérez",
+    "DateOfBirth": "2000-01-01",
+    "FullName": "Raúl Pérez"
   }
 ]

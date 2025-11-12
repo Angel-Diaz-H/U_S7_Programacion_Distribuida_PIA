@@ -5,6 +5,9 @@ namespace TuProyecto.Models
 {
     public class UserModel
     {
+        // Auto-increment integer Id (1,2,3...)
+        public int Id { get; set; } = 0;
+
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string? Email { get; set; }
