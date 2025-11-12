@@ -158,6 +158,28 @@ namespace TuProyecto.Controllers
             return View();
         }
 
+        // Helper: smart title case formatting (used for storing FullName)
+        private static string ToTitleCaseSmart(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return input ?? string.Empty;
+            input = input.Trim();
+            var lowerWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "de", "la", "las", "del", "los", "y", "e" };
+            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var p = parts[i];
+                if (p.Length <= 3 && lowerWords.Contains(p.ToLowerInvariant()) && i != 0)
+                {
+                    parts[i] = p.ToLowerInvariant();
+                }
+                else
+                {
+                    parts[i] = char.ToUpper(p[0]) + p.Substring(1).ToLowerInvariant();
+                }
+            }
+            return string.Join(' ', parts);
+        }
+
         public IActionResult Sucursales()
         {
             return View();
@@ -350,7 +372,7 @@ namespace TuProyecto.Controllers
 
             return RedirectToAction("Ordenar");
         }
-
+        
         // Demo account page showing session user info
         public IActionResult MiCuenta()
         {
@@ -371,14 +393,96 @@ namespace TuProyecto.Controllers
             {
                 ViewData["FullName"] = user.DisplayName ?? username;
                 ViewData["DateOfBirth"] = user.DateOfBirth ?? string.Empty;
+                // expose name parts for editing form
+                ViewData["FirstName"] = user.FirstName ?? string.Empty;
+                ViewData["MiddleName"] = user.MiddleName ?? string.Empty;
+                ViewData["LastName"] = user.LastName ?? string.Empty;
             }
             else
             {
                 ViewData["FullName"] = ViewData["DisplayName"];
                 ViewData["DateOfBirth"] = string.Empty;
+                ViewData["FirstName"] = string.Empty;
+                ViewData["MiddleName"] = string.Empty;
+                ViewData["LastName"] = string.Empty;
             }
 
             return View();
+        }
+        
+        // POST: Edit account details (username + name parts). Email is readonly.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditAccount(string username, string firstName, string middleName, string lastName)
+        {
+            var current = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(current)) return RedirectToAction("IniciarSesion");
+
+            username = (username ?? string.Empty).Trim();
+            firstName = (firstName ?? string.Empty).Trim();
+            middleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName.Trim();
+            lastName = (lastName ?? string.Empty).Trim();
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+            {
+                TempData["EditError"] = "Por favor completa usuario y nombre.";
+                return RedirectToAction("MiCuenta");
+            }
+
+            var users = LoadUsersFromWebRoot(out var loadError);
+            if (!string.IsNullOrEmpty(loadError))
+            {
+                TempData["EditError"] = "Error al leer usuarios: " + loadError;
+                return RedirectToAction("MiCuenta");
+            }
+
+            // find the current user record by the original session username (case-insensitive)
+            var user = users.FirstOrDefault(u => string.Equals(u.Username, current, StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+            {
+                TempData["EditError"] = "Usuario no encontrado.";
+                return RedirectToAction("MiCuenta");
+            }
+
+            // if username changed, ensure uniqueness
+            if (!string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase))
+            {
+                if (users.Any(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase)))
+                {
+                    TempData["EditError"] = "El nombre de usuario ya está en uso.";
+                    return RedirectToAction("MiCuenta");
+                }
+            }
+
+            // Apply changes
+            user.Username = username;
+            user.FirstName = ToTitleCaseSmart(firstName);
+            user.MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : ToTitleCaseSmart(middleName!);
+            user.LastName = ToTitleCaseSmart(lastName);
+            user.FullName = string.Join(' ', new[] { user.FirstName, user.MiddleName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+            // Save back to users.json
+            var filePath = System.IO.Path.Combine(_env.WebRootPath ?? string.Empty, "data", "users.json");
+            try
+            {
+                var writeOptions = new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                var updatedJson = JsonSerializer.Serialize(users, writeOptions);
+                var dir = System.IO.Path.GetDirectoryName(filePath) ?? string.Empty;
+                if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
+                System.IO.File.WriteAllText(filePath, updatedJson, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                TempData["EditError"] = "Error al guardar cambios: " + ex.Message;
+                return RedirectToAction("MiCuenta");
+            }
+
+            // Update session values if username or display name changed
+            HttpContext.Session.SetString("LoggedInUser", user.Username);
+            HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
+
+            TempData["EditSuccess"] = "Datos actualizados correctamente.";
+            return RedirectToAction("MiCuenta");
         }
 
         // Logout demo

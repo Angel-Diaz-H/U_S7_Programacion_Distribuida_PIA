@@ -37,8 +37,28 @@
                 <div class="card shadow-sm p-3 p-5">
                     <div class="card-body">
                         <img src="~/images/Logo1.png" alt="Bowlly's" class="mb-3" style="width:250px;object-fit:cover;border-radius:8px;" />
-                        <h2 class="card-title"><strong>Hola, @ViewData["DisplayName"]</strong>.</h2>
-                        <h3 class="card-subtitle my-4">Mi cuenta.</h3>
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div>
+                                <h2 class="card-title"><strong>Hola, @ViewData["DisplayName"]</strong>.</h2>
+                                <h3 class="card-subtitle my-4">Mi cuenta.</h3>
+                            </div>
+                            <div>
+                                <!-- Edit button with pencil icon -->
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editAccountModal">
+                                    <i class="fas fa-pen me-2"></i>Editar
+                                </button>
+                            </div>
+                        </div>
+
+                        @if (TempData["EditSuccess"] != null)
+                        {
+                            <div class="alert alert-success mt-3">@TempData["EditSuccess"]</div>
+                        }
+                        else if (TempData["EditError"] != null)
+                        {
+                            <div class="alert alert-danger mt-3">@TempData["EditError"]</div>
+                        }
+
                         <p class="text-muted">Usuario: <strong>@ViewData["Username"].</strong></p>
                         <p class="text-muted">Nombre: <strong>@ViewData["FullName"].</strong></p>
                         <p class="text-muted">Correo: <strong>@ViewData["Email"].</strong></p>
@@ -55,3 +75,44 @@
         </div>
     </div>
 </section>
+
+<!-- Edit Account Modal -->
+<div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAccountModalLabel">Editar datos de mi cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form asp-action="EditAccount" asp-controller="Home" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input name="username" type="text" class="form-control" value="@ViewData["Username"]" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correo (no editable)</label>
+                        <input type="email" class="form-control" value="@ViewData["Email"]" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input name="firstName" type="text" class="form-control" value="@(ViewData["FirstName"] ?? string.Empty)" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Segundo nombre / medio (opcional)</label>
+                        <input name="middleName" type="text" class="form-control" value="@(ViewData["MiddleName"] ?? string.Empty)" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Apellido</label>
+                        <input name="lastName" type="text" class="form-control" value="@(ViewData["LastName"] ?? string.Empty)" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
