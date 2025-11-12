@@ -1,14 +1,40 @@
-:root{--green:#0f574c;--light:#f6f9f6}
+@import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css');
+:root{--green:#0f574c;--dark:#064a3b;--accent:#2f8f5a;--light:#f6f9f6}
 
-.reto-hero{background:linear-gradient(180deg,#fff 0%, #f7fff9 100%);padding:60px 0}
-.reto-hero .display-5{color:var(--green);}
-.reto-hero .lead{color:#576a63}
-.reto-hero-img{max-width:100%;height:auto;border-radius:12px;object-fit:cover}
+.reto-hero{background:linear-gradient(180deg,#fff 0%, #f2fff7 100%);padding:70px 0}
+.reto-title{color:var(--dark);font-size:2.8rem}
+.reto-sub{font-size:1.25rem;color:#3d6b5b}
+.intro{color:#4d6e66}
+
+.feature{background:#fff;border-radius:12px}
+.feature-icon{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin:0 auto}
+.feature h6{margin-top:10px}
+
+.reto-image-wrap{position:relative;max-width:360px}
+.reto-image-wrap .reto-hero-img{border-radius:14px}
+.reto-badge{position:absolute;left:16px;bottom:16px;background:var(--green);color:#fff;padding:8px 12px;border-radius:999px;font-weight:700}
+
+.btn-cta{background:var(--green);color:#fff;border-radius:999px;padding:12px 28px;font-weight:700;border:0}
+.btn-cta:hover{background:var(--dark)}
+.btn-outline-cta{border-radius:999px;padding:10px 22px;border:2px solid var(--green);background:transparent;color:var(--green);font-weight:700}
+.btn-outline-cta:hover{background:var(--green);color:#fff}
 
 .reto-details .card{border-radius:12px;border:0}
 .reto-details .card h5{color:var(--green)}
 
-.reto-cta{background:linear-gradient(90deg,var(--green),#064a3b);color:#fff;padding:50px 0}
-.reto-cta .btn-light{background:#fff;color:var(--green);border-radius:40px;padding:12px 28px;font-weight:700}
+.reto-cta{background:linear-gradient(90deg,var(--green),var(--dark));color:#fff;padding:60px 0}
+.reto-cta h3{color:#fff}
+.btn-cta-outline{background:transparent;border:2px solid rgba(255,255,255,0.2);color:#fff;border-radius:999px;padding:10px 26px}
 
-@media(max-width:767px){.reto-hero{padding:30px 0}.reto-hero .display-5{font-size:1.6rem}.reto-hero-img{margin-top:18px}}
+/* responsiveness */
+@media(max-width:991px){
+    .reto-title{font-size:2.2rem}
+    .reto-image-wrap{max-width:260px}
+}
+
+@media(max-width:767px){
+    .reto-hero{padding:30px 0}
+    .reto-title{font-size:1.8rem}
+    .reto-sub{font-size:1rem}
+    .feature-icon{width:48px;height:48px}
+}

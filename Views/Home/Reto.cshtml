@@ -8,26 +8,51 @@
 
 <section class="reto-hero py-5">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="display-5 fw-bold">Healthy Challenge: Únete · Comparte · Gana</h1>
-                <p class="lead text-muted mt-3">Acepta el reto de alimentarte mejor y descubrir lo bien que se siente comer saludable.</p>
-n                <div class="mt-4">
-                    <p class="mb-3">En <strong>Bowlly's</strong>, creemos que comer saludable no tiene que ser aburrido. Por eso creamos el <strong>Healthy Challenge</strong>, una experiencia diseñada para inspirarte a cuidar tu cuerpo mientras disfrutas de cada sabor. Durante una semana (o el tiempo que definas), te invitamos a descubrir lo delicioso que puede ser alimentarte bien, con opciones frescas, naturales y llenas de energía.</p>
-n                    <h4 class="mt-4">Cómo participar</h4>
-                    <p>ÚNETE al reto: visita nuestro restaurante o nuestras redes sociales y regístrate para participar.</p>
-                    <p>COMPARTE tu experiencia: publica tus comidas saludables en redes usando el hashtag <strong>#HealthyChallengeBowllys</strong> y etiquétanos.</p>
-                    <p>GANA premios especiales: cada semana seleccionaremos a los participantes más creativos y constantes para ganar comidas gratis, descuentos o productos saludables.</p>
-n                    <h4 class="mt-4">Objetivo del reto</h4>
-                    <p>Queremos que disfrutes el proceso de cuidarte. No se trata de dietas, sino de crear hábitos que te hagan sentir bien. El Healthy Challenge es una invitación a reconectar con lo natural, disfrutar la comida real y demostrar que la salud también puede ser sabrosa y divertida.</p>
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-7">
+                <h1 class="display-3 fw-bold reto-title">Healthy Challenge</h1>
+                <p class="lead reto-sub"><strong>Únete • Comparte • Gana.</strong> <br /> Acepta el reto de alimentarte mejor y descubre lo bien que se siente comer saludable.</p>
+
+                <p class="mt-4 text-muted intro">En <strong>Bowlly's</strong> creemos que comer saludable no tiene por qué ser aburrido. El <strong>Healthy Challenge</strong> es una experiencia diseñada para inspirarte a cuidar tu cuerpo mientras disfrutas de cada bocado. Durante una semana te invitamos a probar opciones frescas, naturales y llenas de energía.</p>
+
+                <div class="row mt-4 gx-3 feature-row">
+                    <div class="col-sm-4">
+                        <div class="feature p-3 text-center rounded-lg shadow-sm">
+                            <div class="feature-icon bg-success text-white mb-2"><i class="bi bi-people-fill"></i></div>
+                            <h6 class="fw-bold">Únete</h6>
+                            <p class="small text-muted">Regístrate en nuestra web o visita la sucursal más cercana.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="feature p-3 text-center rounded-lg shadow-sm">
+                            <div class="feature-icon bg-success text-white mb-2"><i class="bi bi-camera-fill"></i></div>
+                            <h6 class="fw-bold">Comparte</h6>
+                            <p class="small text-muted">Publica tus comidas con <strong>#HealthyChallengeBowllys</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="feature p-3 text-center rounded-lg shadow-sm">
+                            <div class="feature-icon bg-success text-white mb-2"><i class="bi bi-gift-fill"></i></div>
+                            <h6 class="fw-bold">Gana</h6>
+                            <p class="small text-muted">Premios semanales: comidas gratis, descuentos y menciones.</p>
+                        </div>
+                    </div>
                 </div>
-n                <div class="mt-4">
-                    <a class="btn btn-success btn-lg me-2" asp-controller="Home" asp-action="Sucursales">Participa ahora</a>
-                    <a class="btn btn-outline-light btn-lg" href="#share-info">Cómo compartir</a>
+
+                <div class="mt-4">
+                    <a class="btn btn-cta me-3" asp-controller="Home" asp-action="Sucursales">Participa ahora</a>
+                    <a class="btn btn-outline-cta" href="#share-info">Cómo compartir</a>
                 </div>
+
             </div>
-n            <div class="col-lg-4 text-center mt-4 mt-lg-0">
-                <img src="~/images/exterior2.png" alt="Exterior Bowlly's" class="img-fluid rounded shadow-lg reto-hero-img">
+
+            <div class="col-lg-5 text-center">
+                <div class="reto-image-wrap mx-auto shadow-lg rounded-lg">
+                    <img src="~/images/exterior2.png" alt="Exterior Bowlly's" class="img-fluid reto-hero-img">
+                    <div class="reto-badge">#HealthyChallengeBowllys</div>
+                </div>
             </div>
         </div>
     </div>
@@ -37,16 +62,25 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-md-6">
-                <div class="card p-4 shadow-sm">
+                <div class="card p-4 shadow-sm rounded-lg">
                     <h5 class="fw-bold">Dinámica detallada</h5>
-                    <p>Regístrate, comparte y suma puntos cada vez que publiques una foto o reseña usando el hashtag. Los participantes tendrán retos semanales (por ejemplo: 3 días sin alimentos procesados, o 5 desayunos saludables en una semana). Habrá premios y menciones especiales.</p>
+                    <p class="text-muted">Regístrate, comparte y suma puntos cada vez que publiques una foto o reseña con el hashtag. Habrá retos semanales (por ejemplo: 3 días sin procesados; 5 desayunos saludables). Habrá premios y menciones especiales.</p>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="card p-4 shadow-sm">
+                <div class="card p-4 shadow-sm rounded-lg">
                     <h5 class="fw-bold">Premios y reconocimiento</h5>
-                    <p>Los ganadores semanales recibirán comidas gratis y descuentos. Además, los participantes destacados aparecerán en nuestras redes y tendrán acceso a eventos exclusivos.</p>
+                    <p class="text-muted">Los ganadores recibirán comidas gratis, descuentos y aparecerán en nuestras redes. Además tendrán acceso a promociones exclusivas.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card p-4 shadow-sm rounded-lg text-center bg-light">
+                    <h5 class="fw-bold">Objetivo del reto</h5>
+                    <p class="text-muted mb-0">Crear hábitos saludables disfrutando la comida real. No es una dieta; es una invitación a reconectar con lo natural y compartir la experiencia.</p>
                 </div>
             </div>
         </div>
@@ -55,8 +89,8 @@
 
 <section class="reto-cta py-5 text-center">
     <div class="container">
-        <h3 class="fw-bold">¿Listo para aceptar el reto?</h3>
-        <p class="mb-4">Participa ahora, comparte tu experiencia y sé parte de una comunidad que elige cuidarse con sabor.</p>
-        <a class="btn btn-light btn-lg" href="#">#HealthyChallengeBowllys</a>
+        <h3 class="fw-bold mb-3">¿Listo para aceptar el reto?</h3>
+        <p class="mb-4 text-light">Participa ahora, comparte tu experiencia y sé parte de una comunidad que elige cuidarse con sabor.</p>
+        <p>#HealthyChallengeBowllys</p>
     </div>
 </section>
