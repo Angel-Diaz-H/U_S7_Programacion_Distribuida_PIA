@@ -2,6 +2,34 @@
     ViewData["Title"] = "Mi cuenta";
 }
 
+@{
+    // Prepare formatted date of birth
+    var dobRaw = ViewData["DateOfBirth"] as string;
+    string dobFormatted = string.Empty;
+    if (!string.IsNullOrWhiteSpace(dobRaw))
+    {
+        // Try parse as DateOnly (stored as yyyy-MM-dd)
+        if (DateOnly.TryParse(dobRaw, out var dob))
+        {
+            var es = new System.Globalization.CultureInfo("es-ES");
+            dobFormatted = dob.ToString("dd 'de' MMMM 'de' yyyy", es);
+        }
+        else
+        {
+            // fallback: try parsing as DateTime
+            if (DateTime.TryParse(dobRaw, out var dt))
+            {
+                var es = new System.Globalization.CultureInfo("es-ES");
+                dobFormatted = dt.ToString("dd 'de' MMMM 'de' yyyy", es);
+            }
+            else
+            {
+                dobFormatted = dobRaw; // show raw if parsing fails
+            }
+        }
+    }
+}
+
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -15,7 +43,7 @@
                         <p class="text-muted">Usuario: <strong>@ViewData["Username"].</strong></p>
                         <p class="text-muted">Nombre: <strong>@ViewData["FullName"].</strong></p>
                         <p class="text-muted">Correo: <strong>@ViewData["Email"].</strong></p>
-                        <p class="text-muted">Fecha de nacimiento: <strong>@ViewData["DateOfBirth"].</strong></p>
+                        <p class="text-muted">Fecha de nacimiento: <strong>@(string.IsNullOrWhiteSpace(dobFormatted) ? "No especificada" : dobFormatted).</strong></p>
 
                         <h3 class="card-subtitle my-4">Mis pedidos.</h3>
                         <p>Aquí se verán los pedidos, puntos del usuario.</p>

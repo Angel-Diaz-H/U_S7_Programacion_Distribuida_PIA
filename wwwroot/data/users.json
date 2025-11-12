@@ -7,5 +7,14 @@
     "MiddleName": null,
     "LastName": "campos",
     "DateOfBirth": "2013-01-01"
+  },
+  {
+    "Username": "angel",
+    "Password": "123",
+    "Email": "angel@gmail.com",
+    "FirstName": "angel",
+    "MiddleName": null,
+    "LastName": "diaz",
+    "DateOfBirth": "2000-01-01"
   }
 ]
