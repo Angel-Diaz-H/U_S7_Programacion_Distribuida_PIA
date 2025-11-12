@@ -135,6 +135,8 @@
                 </div>
             </div>
             <div class="modal-footer">
+                @* Reserve button points to Ordenar if logged in, otherwise to IniciarSesion. JS will append branchId when a branch is selected. *@
+                <a id="branchReserveBtn" class="btn btn-success" href="@(Context.Session.GetString("LoggedInUser") != null ? Url.Action("Ordenar", "Home") : Url.Action("IniciarSesion", "Home"))">Reservar</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -190,6 +192,8 @@
         const branchHoursEl = document.getElementById('branchHours');
         const branchPhoneEl = document.getElementById('branchPhone');
         const branchMapLinkEl = document.getElementById('branchMapLink');
+        const branchReserveBtn = document.getElementById('branchReserveBtn');
+        const reserveBaseHref = branchReserveBtn ? branchReserveBtn.getAttribute('href') : null;
 
         // Function to open modal and populate list for a given state key
         function openBranchesModal(stateKey) {
@@ -203,6 +207,10 @@
                 branchHoursEl.textContent = '';
                 branchPhoneEl.textContent = '';
                 branchMapLinkEl.style.display = 'none';
+                if (branchReserveBtn && reserveBaseHref) {
+                    // reset to base href if no branch
+                    branchReserveBtn.setAttribute('href', reserveBaseHref);
+                }
             } else {
                 branches.forEach((b, idx) => {
                     const item = document.createElement('button');
@@ -234,6 +242,13 @@
             items.forEach(it => it.classList.remove('active'));
             const selected = Array.from(items).find(it => it.dataset.branchId == branch.id);
             if (selected) selected.classList.add('active');
+
+            // update reserve button href to include branchId
+            if (branchReserveBtn && reserveBaseHref) {
+                // append branchId param regardless of base (Ordenar or IniciarSesion)
+                const separator = reserveBaseHref.includes('?') ? '&' : '?';
+                branchReserveBtn.setAttribute('href', reserveBaseHref + separator + 'branchId=' + encodeURIComponent(branch.id));
+            }
         }
 
         // Attach click handlers to buttons on page

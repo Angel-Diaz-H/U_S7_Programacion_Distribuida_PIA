@@ -33,6 +33,20 @@
                     @*<li class="nav-item"><a class="nav-link" href="#">Tu Evento</a></li>*@
                     <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contacto">Contacto</a></li>
 
+                    @* Ordenar/Reservar button: use a distinct filled green rounded style here, leave Iniciar sesión as btn-order *@
+                    @if (Context.Session.GetString("LoggedInUser") != null)
+                    {
+                        <li class="nav-item ms-3">
+                            <a class="btn btn-success rounded-pill px-4 text-white" asp-controller="Home" asp-action="Ordenar">Reservar</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item ms-3">
+                            <a class="btn btn-success rounded-pill px-4 text-white" asp-controller="Home" asp-action="IniciarSesion">Reservar</a>
+                        </li>
+                    }
+
                     @if (Context.Session.GetString("LoggedInUser") != null)
                     {
                         <li class="nav-item ms-lg-3">
@@ -60,7 +74,7 @@
                     <div class="row">
                         <div class="col-6">
                             <ul class="list-unstyled">
-                                <li><a href="#">Ordena aquí</a></li>
+                                <li><a asp-controller="Home" asp-action="Ordenar">Reserva aquí</a></li>
                                 @* <li><a href="#">Facturación</a></li> *@
                                 @* <li><a href="#">Legales Promociones</a></li> *@
                             </ul>
