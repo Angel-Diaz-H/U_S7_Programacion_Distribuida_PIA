@@ -1,38 +1,28 @@
 ﻿[
   {
-    "Id": 1,
-    "Username": "rau",
-    "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 1,
-    "BranchName": "Bowlly\u0027s San Pedro",
-    "Date": "2025-11-12",
-    "Hour": "15:00",
-    "Persons": 1,
-    "Notes": "",
-    "CreatedAt": "2025-11-12T18:43:23.8100435Z"
-  },
-  {
     "Id": 2,
     "Username": "rau",
     "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 1,
-    "BranchName": "Bowlly\u0027s San Pedro",
+    "BranchId": 3,
+    "BranchName": "Bowlly\u0027s Zapopan",
     "Date": "2025-11-13",
-    "Hour": "09:00",
-    "Persons": 1,
-    "Notes": "",
-    "CreatedAt": "2025-11-12T18:55:30.5687895Z"
+    "Hour": "20:00",
+    "Persons": 19,
+    "Notes": "S\u00ED ir\u00E9",
+    "CreatedAt": "2025-11-12T21:07:21.7432565Z",
+    "Status": "cancelled"
   },
   {
     "Id": 3,
     "Username": "rau",
     "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 1,
-    "BranchName": "Bowlly\u0027s San Pedro",
-    "Date": "2025-11-14",
-    "Hour": "09:00",
-    "Persons": 1,
-    "Notes": "",
-    "CreatedAt": "2025-11-12T18:56:41.0646973Z"
+    "BranchId": 8,
+    "BranchName": "Bowlly\u0027s Tijuana Centro",
+    "Date": "2025-11-20",
+    "Hour": "20:00",
+    "Persons": 20,
+    "Notes": "Prueba 1",
+    "CreatedAt": "2025-11-12T21:07:41.4707156Z",
+    "Status": "active"
   }
 ]

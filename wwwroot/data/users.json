@@ -1,5 +1,6 @@
 ﻿[
   {
+    "Id": 1,
     "Username": "claudia",
     "Password": "123",
     "Email": "clau@gmail.com",
@@ -10,6 +11,7 @@
     "FullName": null
   },
   {
+    "Id": 2,
     "Username": "angel",
     "Password": "123",
     "Email": "angel@gmail.com",
@@ -20,6 +22,7 @@
     "FullName": "Angel Diaz"
   },
   {
+    "Id": 3,
     "Username": "rau",
     "Password": "123asdASD!",
     "Email": "raul@gmail.com",

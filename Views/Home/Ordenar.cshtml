@@ -6,4 +6,225 @@
     <link rel="stylesheet" href="~/css/sucursales.css" asp-append-version="true" />
 }
 
-<div class="container py-5">    <div class="row justify-content-center">        <div class="col-md-8">            <div class="card shadow-sm p-4">                <h3 class="mb-3">Reservar en Bowlly's</h3>                @if (TempData["OrderError"] != null)                {                    <div class="alert alert-danger">@TempData["OrderError"]</div>                }                <form method="post" id="orderForm">                    <div class="mb-3">                        <label class="form-label">Sucursal</label>                        <select name="branchId" class="form-select" required id="branchSelect">                            <option value="">Seleccione una sucursal</option>                            @foreach(dynamic b in (System.Collections.IEnumerable)ViewData["Branches"]) {                                <option value="@b.Id">@b.Name</option>                            }                        </select>                        <div class="form-text">Selecciona primero la sucursal para ver horas disponibles.</div>                    </div>                    <div class="row g-3">                        <div class="col-md-6">                            <label class="form-label">Fecha</label>                            <input type="date" name="date" class="form-control" required id="orderDate" placeholder="dd/mm/aaaa" disabled />                        </div>                        <div class="col-md-6">                            <label class="form-label">Hora</label>                            <select name="hour" class="form-select" required id="orderHour" disabled>                                <option value="">Selecciona hora</option>                            </select>                        </div>                    </div>                    <div class="mb-3 mt-3">                        <label class="form-label">Personas</label>                        <select name="persons" class="form-select" id="personsSelect" disabled>                            @for (int i=1;i<=20;i++){                                <option value="@i">@i</option>                            }                        </select>                    </div>                    <div class="mb-3">                        <label class="form-label">Notas (opcional)</label>                        <textarea name="notes" class="form-control" rows="3"></textarea>                    </div>                    <button class="btn btn-success" type="submit" id="submitBtn" disabled>Confirmar reserva</button>                </form>            </div>        </div>    </div></div><!-- Modal de éxito con estilo y icono centrado --><div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-hidden="true">    <div class="modal-dialog modal-dialog-centered">        <div class="modal-content text-center">            <div class="modal-header bg-success text-white">                <h5 class="modal-title w-100">Reservación confirmada</h5>                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>            </div>            <div class="modal-body">                <div class="mb-3 d-flex justify-content-center">                    <div style="width:96px;height:96px;border-radius:50%;background:#e9f6ef;display:flex;align-items:center;justify-content:center;">                        <i class="fas fa-check-circle text-success" style="font-size:56px;"></i>                    </div>                </div>                <p id="orderSuccessText" class="lead"></p>            </div>            <div class="modal-footer justify-content-center">                <a class="btn btn-outline-success" href="@Url.Action("MiCuenta", "Home")">Ver mi cuenta</a>                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>            </div>        </div>    </div></div>@section Scripts {    <script>        // Client-side progressive enabling: branch -> date -> hour -> persons -> submit        document.addEventListener('DOMContentLoaded', function() {            const dateInput = document.getElementById('orderDate');            const hourSelect = document.getElementById('orderHour');            const branchSelect = document.getElementById('branchSelect');            const personsSelect = document.getElementById('personsSelect');            const submitBtn = document.getElementById('submitBtn');            const now = new Date();            const yyyy = now.getFullYear();            const mm = String(now.getMonth() + 1).padStart(2, '0');            const dd = String(now.getDate()).padStart(2, '0');            const minDate = yyyy + '-' + mm + '-' + dd;            // set max to 15 days ahead            const max = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 15);            const maxY = max.getFullYear();            const maxM = String(max.getMonth() + 1).padStart(2, '0');            const maxD = String(max.getDate()).padStart(2, '0');            const maxDate = maxY + '-' + maxM + '-' + maxD;            if (dateInput) {                dateInput.setAttribute('min', minDate);                dateInput.setAttribute('max', maxDate);            }            async function fetchAvailability(date) {                const branchId = branchSelect.value || 0;                const res = await fetch(`/Home/GetAvailability?date=${date}&branchId=${branchId}`);                if (!res.ok) return null;                const data = await res.json();                return data.success ? data.availability : null;            }            function resetDate() {                dateInput.value = '';                dateInput.disabled = true;            }            function resetHour() {                hourSelect.innerHTML = '<option value="">Selecciona hora</option>';                hourSelect.disabled = true;            }            function resetPersons() {                personsSelect.value = '1';                personsSelect.disabled = true;            }            function resetSubmit() {                submitBtn.disabled = true;            }            // on branch change -> enable date, reset downstream            branchSelect.addEventListener('change', function(){                resetHour();                resetPersons();                resetSubmit();                if (!branchSelect.value) {                    resetDate();                    return;                }                dateInput.disabled = false;            });            // when date changes -> fetch availability and populate hours, reset persons+submit            dateInput && dateInput.addEventListener('change', async function() {                resetHour();                resetPersons();                resetSubmit();                const date = dateInput.value;                if (!branchSelect.value || !date) return;                const avail = await fetchAvailability(date);                hourSelect.innerHTML = '<option value="">Selecciona hora</option>';                if (!avail) { hourSelect.disabled = true; return; }                const nowLocal = new Date();                // compute earliest allowed hour for same-day reservations: at least 2 hours from now (hour-based)                const earliestAllowedHour = nowLocal.getHours() + 2;                for (const optHour of ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00']){                    const remaining = avail[optHour] ?? 0;                    const opt = document.createElement('option');                    opt.value = optHour;                    opt.text = optHour + (remaining >= 0 ? (' — ' + remaining + ' disponibles') : '');                    if (remaining <= 0) opt.disabled = true;                    // if date is today, disable hours that are less than now.hour + 2 (hour-based)                    const selDate = new Date(date + 'T00:00:00');                    if (selDate.toDateString() === nowLocal.toDateString()){                        const h = parseInt(optHour.split(':')[0],10);                        if (h < earliestAllowedHour) opt.disabled = true;                    }                    hourSelect.appendChild(opt);                }                hourSelect.disabled = false;            });            // when hour selected -> enable persons            hourSelect.addEventListener('change', function() {                personsSelect.disabled = !hourSelect.value;                // enable submit if persons also selected                submitBtn.disabled = !(hourSelect.value && personsSelect.value);            });            // when persons selected -> enable submit if hour selected            personsSelect.addEventListener('change', function() {                submitBtn.disabled = !(hourSelect.value && personsSelect.value);            });            // initialize: disable downstream controls            resetDate(); resetHour(); resetPersons(); resetSubmit();            // Show styled modal instead of alert when success - format date dd/mm/yyyy and hour HH:00            var success = '@(TempData["OrderSuccess"] ?? "")';            var info = '@(TempData["OrderInfo"] ?? "")';            if (success) {                try {                    var parsed = JSON.parse(info.replace(/&quot;/g, '"'));                    // parsed.Date is yyyy-MM-dd -> convert to dd/mm/yyyy                    var d = parsed.Date.split('-');                    var dispDate = d[2] + '/' + d[1] + '/' + d[0];                    var message = '<strong>' + success + '</strong><br/><br/>' +                        '<strong>Sucursal:</strong> ' + parsed.BranchName + '<br/>' +                        '<strong>Fecha:</strong> ' + dispDate + ' ' + parsed.Hour + '<br/>' +                        '<strong>Personas:</strong> ' + parsed.Persons;                    document.getElementById('orderSuccessText').innerHTML = message;                    var modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));                    modal.show();                } catch (e) {                    document.getElementById('orderSuccessText').innerText = success;                    var modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));                    modal.show();                }            }        });    </script>}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm p-4">
+                <h3 class="mb-3">Reservar en Bowlly's</h3>
+
+                @if (TempData["OrderError"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["OrderError"]</div>
+                }
+
+                <form method="post" id="orderForm">
+                    <div class="mb-3">
+                        <label class="form-label">Sucursal</label>
+                        <select name="branchId" class="form-select" required id="branchSelect">
+                            <option value="">Seleccione una sucursal</option>
+                            @foreach(dynamic b in (System.Collections.IEnumerable)ViewData["Branches"]) {
+                                <option value="@b.Id">@b.Name</option>
+                            }
+                        </select>
+                        <div class="form-text">Selecciona primero la sucursal para ver horas disponibles.</div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" name="date" class="form-control" required id="orderDate" placeholder="dd/mm/aaaa" disabled />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Hora</label>
+                            <select name="hour" class="form-select" required id="orderHour" disabled>
+                                <option value="">Selecciona hora</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Personas</label>
+                        <select name="persons" class="form-select" id="personsSelect" disabled>
+                            @for (int i=1;i<=20;i++){
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notas (opcional)</label>
+                        <textarea name="notes" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button class="btn btn-success" type="submit" id="submitBtn" disabled>Confirmar reserva</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de éxito con estilo y icono centrado -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title w-100">Reservación confirmada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 d-flex justify-content-center">
+                    <div style="width:96px;height:96px;border-radius:50%;background:#e9f6ef;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-check-circle text-success" style="font-size:56px;"></i>
+                    </div>
+                </div>
+                <p id="orderSuccessText" class="lead"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a class="btn btn-outline-success" href="@Url.Action("MiCuenta", "Home")">Ver mi cuenta</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Client-side progressive enabling: branch -> date -> hour -> persons -> submit
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('orderDate');
+            const hourSelect = document.getElementById('orderHour');
+            const branchSelect = document.getElementById('branchSelect');
+            const personsSelect = document.getElementById('personsSelect');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const minDate = yyyy + '-' + mm + '-' + dd;
+            // set max to 15 days ahead
+            const max = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 15);
+            const maxY = max.getFullYear();
+            const maxM = String(max.getMonth() + 1).padStart(2, '0');
+            const maxD = String(max.getDate()).padStart(2, '0');
+            const maxDate = maxY + '-' + maxM + '-' + maxD;
+
+            if (dateInput) {
+                dateInput.setAttribute('min', minDate);
+                dateInput.setAttribute('max', maxDate);
+            }
+
+            async function fetchAvailability(date) {
+                const branchId = branchSelect.value || 0;
+                const res = await fetch(`/Home/GetAvailability?date=${date}&branchId=${branchId}`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                return data.success ? data.availability : null;
+            }
+
+            function resetDate() {
+                dateInput.value = '';
+                dateInput.disabled = true;
+            }
+            function resetHour() {
+                hourSelect.innerHTML = '<option value="">Selecciona hora</option>';
+                hourSelect.disabled = true;
+            }
+            function resetPersons() {
+                personsSelect.value = '1';
+                personsSelect.disabled = true;
+            }
+            function resetSubmit() {
+                submitBtn.disabled = true;
+            }
+
+            // on branch change -> enable date, reset downstream
+            branchSelect.addEventListener('change', function(){
+                resetHour();
+                resetPersons();
+                resetSubmit();
+
+                if (!branchSelect.value) {
+                    resetDate();
+                    return;
+                }
+                dateInput.disabled = false;
+            });
+
+            // when date changes -> fetch availability and populate hours, reset persons+submit
+            dateInput && dateInput.addEventListener('change', async function() {
+                resetHour();
+                resetPersons();
+                resetSubmit();
+
+                const date = dateInput.value;
+                if (!branchSelect.value || !date) return;
+
+                const avail = await fetchAvailability(date);
+                hourSelect.innerHTML = '<option value="">Selecciona hora</option>';
+                if (!avail) { hourSelect.disabled = true; return; }
+
+                const nowLocal = new Date();
+                // compute earliest allowed hour for same-day reservations: at least 2 hours from now (hour-based)
+                const earliestAllowedHour = nowLocal.getHours() + 2;
+
+                for (const optHour of ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00']){
+                    const remaining = avail[optHour] ?? 0;
+                    const opt = document.createElement('option');
+                    opt.value = optHour;
+                    opt.text = optHour + (remaining >= 0 ? (' — ' + remaining + ' disponibles') : '');
+                    if (remaining <= 0) opt.disabled = true;
+
+                    // if date is today, disable hours that are less than now.hour + 2 (hour-based)
+                    const selDate = new Date(date + 'T00:00:00');
+                    if (selDate.toDateString() === nowLocal.toDateString()){
+                        const h = parseInt(optHour.split(':')[0],10);
+                        if (h < earliestAllowedHour) opt.disabled = true;
+                    }
+
+                    hourSelect.appendChild(opt);
+                }
+
+                hourSelect.disabled = false;
+            });
+
+            // when hour selected -> enable persons
+            hourSelect.addEventListener('change', function() {
+                personsSelect.disabled = !hourSelect.value;
+                // enable submit if persons also selected
+                submitBtn.disabled = !(hourSelect.value && personsSelect.value);
+            });
+
+            // when persons selected -> enable submit if hour selected
+            personsSelect.addEventListener('change', function() {
+                submitBtn.disabled = !(hourSelect.value && personsSelect.value);
+            });
+
+            // initialize: disable downstream controls
+            resetDate(); resetHour(); resetPersons(); resetSubmit();
+
+            // Show styled modal instead of alert when success - format date dd/mm/yyyy and hour HH:00
+            var success = '@(TempData["OrderSuccess"] ?? "")';
+            var info = '@(TempData["OrderInfo"] ?? "")';
+            if (success) {
+                try {
+                    var parsed = JSON.parse(info.replace(/&quot;/g, '"'));
+                    // parsed.Date is yyyy-MM-dd -> convert to dd/mm/yyyy
+                    var d = parsed.Date.split('-');
+                    var dispDate = d[2] + '/' + d[1] + '/' + d[0];
+                    var message = '<strong>' + success + '</strong><br/><br/>' +
+                        '<strong>Sucursal:</strong> ' + parsed.BranchName + '<br/>' +
+                        '<strong>Fecha:</strong> ' + dispDate + ' ' + parsed.Hour + '<br/>' +
+                        '<strong>Personas:</strong> ' + parsed.Persons;
+                    document.getElementById('orderSuccessText').innerHTML = message;
+                    var modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+                    modal.show();
+                } catch (e) {
+                    document.getElementById('orderSuccessText').innerText = success;
+                    var modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+                    modal.show();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,65 @@
+@using TuProyecto.Models
+@{
+    Layout = null;
+    var active = ViewData["ActiveOrders"] as IEnumerable<OrderModel> ?? Enumerable.Empty<OrderModel>();
+    var past = ViewData["PastOrders"] as IEnumerable<OrderModel> ?? Enumerable.Empty<OrderModel>();
+}
+
+<div class="my-orders">
+    <h4 class="mb-3">Reservaciones activas</h4>
+    @if (!active.Any())
+    {
+        <div class="alert alert-info">No tienes reservaciones activas.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach(var o in active)
+            {
+                <div class="col-md-6">
+                    <div class="card shadow-sm p-3 rounded-lg">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-1">@o.BranchName</h5>
+                                <div class="text-muted">Fecha: @o.Date  · Hora: @o.Hour</div>
+                                <div class="text-muted">Personas: @o.Persons</div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-sm btn-outline-primary me-2" onclick="openEdit(@o.Id)">Editar</button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="cancelOrder(@o.Id)">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <h4 class="mt-4 mb-3">Histórico</h4>
+    @if (!past.Any())
+    {
+        <div class="alert alert-secondary">No hay reservaciones pasadas.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach(var o in past)
+            {
+                <div class="col-md-6">
+                    <div class="card bg-light p-3 rounded-lg">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">@o.BranchName</h6>
+                                <div class="text-muted">Fecha: @o.Date · Hora: @o.Hour</div>
+                                <div class="text-muted">Estado: @(string.IsNullOrWhiteSpace(o.Status) ? "active" : o.Status)</div>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteOrder(@o.Id)">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

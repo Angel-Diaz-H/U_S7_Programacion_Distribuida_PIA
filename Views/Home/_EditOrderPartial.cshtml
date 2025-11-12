@@ -1,0 +1,80 @@
+@model TuProyecto.Models.OrderModel
+@{
+    Layout = null;
+    var o = Model;
+}
+<div class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar reservación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editOrderForm">
+            <input type="hidden" name="id" value="@o.Id" />
+            <div class="mb-3">
+                <label class="form-label">Sucursal</label>
+                <input class="form-control" value="@o.BranchName" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Fecha</label>
+                <input class="form-control" value="@o.Date" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hora</label>
+                <select name="hour" class="form-select" required>
+                    @{
+                        var hours = Enumerable.Range(9, 12).Select(h => h.ToString("D2") + ":00");
+                        foreach(var h in hours)
+                        {
+                            var sel = o.Hour == h ? " selected=\"selected\"" : "";
+                            @Html.Raw($"<option value=\"{h}\"{sel}>{h}</option>")
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Personas</label>
+                <select name="persons" class="form-select">
+                    @{
+                        for(int i=1;i<=20;i++)
+                        {
+                            var sel = o.Persons == i ? " selected=\"selected\"" : "";
+                            @Html.Raw($"<option value=\"{i}\"{sel}>{i}</option>")
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Notas</label>
+                <textarea name="notes" class="form-control">@o.Notes</textarea>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveEditBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.getElementById('saveEditBtn').addEventListener('click', async function(){
+        const form = document.getElementById('editOrderForm');
+        const data = new FormData(form);
+        const payload = {
+            id: parseInt(data.get('id')),
+            hour: data.get('hour'),
+            persons: parseInt(data.get('persons')),
+            notes: data.get('notes') || ''
+        };
+        const res = await fetch('/Home/EditOrderSubmit', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if (res.ok) location.reload();
+        else {
+            const txt = await res.text();
+            alert('Error: ' + txt);
+        }
+    });
+</script>

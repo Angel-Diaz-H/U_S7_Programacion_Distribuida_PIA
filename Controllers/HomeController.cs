@@ -7,7 +7,7 @@ using TuProyecto.Models;
 
 namespace TuProyecto.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
         private readonly IWebHostEnvironment _env;
 
@@ -89,7 +89,33 @@ namespace TuProyecto.Controllers
             {
                 if (!System.IO.File.Exists(ordersPath)) return new List<OrderModel>();
                 var json = System.IO.File.ReadAllText(ordersPath, Encoding.UTF8);
-                return JsonSerializer.Deserialize<List<OrderModel>>(json) ?? new List<OrderModel>();
+                var list = JsonSerializer.Deserialize<List<OrderModel>>(json) ?? new List<OrderModel>();
+
+                // normalize missing Status and set default to active
+                var needSave = false;
+                foreach (var o in list)
+                {
+                    if (string.IsNullOrWhiteSpace(o.Status))
+                    {
+                        o.Status = "active";
+                        needSave = true;
+                    }
+                }
+
+                if (needSave)
+                {
+                    try
+                    {
+                        var write = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+                        System.IO.File.WriteAllText(ordersPath, write, Encoding.UTF8);
+                    }
+                    catch
+                    {
+                        // ignore write errors
+                    }
+                }
+
+                return list;
             }
             catch
             {
@@ -244,9 +270,10 @@ namespace TuProyecto.Controllers
                 }
 
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                List<UserModel> users;
                 try
                 {
-                    return JsonSerializer.Deserialize<List<UserModel>>(json, options) ?? new List<UserModel>();
+                    users = JsonSerializer.Deserialize<List<UserModel>>(json, options) ?? new List<UserModel>();
                 }
                 catch (Exception ex)
                 {
@@ -254,7 +281,7 @@ namespace TuProyecto.Controllers
                     var cleaned = new string(json.Where(c => !char.IsControl(c) || c == '\r' || c == '\n' || c == '\t').ToArray());
                     try
                     {
-                        return JsonSerializer.Deserialize<List<UserModel>>(cleaned, options) ?? new List<UserModel>();
+                        users = JsonSerializer.Deserialize<List<UserModel>>(cleaned, options) ?? new List<UserModel>();
                     }
                     catch (Exception inner)
                     {
@@ -262,6 +289,35 @@ namespace TuProyecto.Controllers
                         return new List<UserModel>();
                     }
                 }
+
+                // Ensure each user has an integer Id; assign incremental ids if missing (0)
+                var needSave = false;
+                int maxId = users.Any() ? users.Max(u => u.Id) : 0;
+                foreach (var u in users)
+                {
+                    if (u.Id <= 0)
+                    {
+                        maxId++;
+                        u.Id = maxId;
+                        needSave = true;
+                    }
+                }
+
+                if (needSave)
+                {
+                    try
+                    {
+                        var writeOptions = new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                        var updated = JsonSerializer.Serialize(users, writeOptions);
+                        System.IO.File.WriteAllText(dataPath, updated, Encoding.UTF8);
+                    }
+                    catch
+                    {
+                        // ignore save errors here
+                    }
+                }
+
+                return users;
             }
             catch (Exception ex)
             {
@@ -288,30 +344,33 @@ namespace TuProyecto.Controllers
                 }
 
                 // Find user by username OR email (case-insensitive)
-                var foundByNameOrEmail = users.FirstOrDefault(u =>
+                var found = users.FirstOrDefault(u =>
                     string.Equals((u.Username ?? string.Empty).Trim(), inputUser, StringComparison.OrdinalIgnoreCase)
                     || string.Equals((u.Email ?? string.Empty).Trim(), inputUser, StringComparison.OrdinalIgnoreCase));
 
-                if (foundByNameOrEmail == null)
+                if (found == null)
                 {
                     ViewBag.ErrorMessage = $"Usuario no encontrado.";
                     return View();
                 }
 
                 // Check password
-                if (!string.Equals((foundByNameOrEmail.Password ?? string.Empty).Trim(), inputPass, StringComparison.Ordinal))
+                if (!string.Equals((found.Password ?? string.Empty).Trim(), inputPass, StringComparison.Ordinal))
                 {
                     ViewBag.ErrorMessage = "Contraseña incorrecta.";
                     return View();
                 }
 
-                // Success
-                var user = foundByNameOrEmail;
-                HttpContext.Session.SetString("LoggedInUser", user.Username);
-                HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
-                HttpContext.Session.SetString("LoggedInEmail", user.Email ?? "");
+                // Success: set both username and numeric id if available
+                HttpContext.Session.SetString("LoggedInUser", found.Username);
+                HttpContext.Session.SetString("LoggedInDisplayName", found.DisplayName ?? found.Username);
+                HttpContext.Session.SetString("LoggedInEmail", found.Email ?? string.Empty);
+                if (found.Id > 0)
+                {
+                    HttpContext.Session.SetInt32("LoggedInUserId", found.Id);
+                }
 
-                TempData["LoginSuccess"] = $"Bienvenido, {user.DisplayName ?? user.Username}";
+                TempData["LoginSuccess"] = $"Bienvenido, {found.DisplayName ?? found.Username}";
                 return RedirectToAction("Index", "Home");
             }
             catch (System.Exception ex)
@@ -478,7 +537,8 @@ namespace TuProyecto.Controllers
                 Hour = hour,
                 Persons = persons,
                 Notes = notes,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Status = "active"
             };
 
             if (!AppendOrderAtomic(newOrder, out var err))
@@ -652,6 +712,205 @@ namespace TuProyecto.Controllers
             Response.StatusCode = 404;
             return View("Error404");
         }
+
+        // GET: List orders for current user (active + history)
+        [HttpGet]
+        public IActionResult MyOrders()
+        {
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return RedirectToAction("IniciarSesion");
+
+            var orders = ReadOrdersSafe();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var userOrders = orders.Where(o => string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase))
+                                   .OrderByDescending(o => o.Date).ThenByDescending(o => o.Hour)
+                                   .ToList();
+
+            var active = new List<OrderModel>();
+            var past = new List<OrderModel>();
+
+            foreach (var o in userOrders)
+            {
+                if (DateOnly.TryParse(o.Date, out var d))
+                {
+                    if (string.Equals(o.Status, "active", StringComparison.OrdinalIgnoreCase) && d >= today)
+                        active.Add(o);
+                    else
+                        past.Add(o);
+                }
+                else
+                {
+                    // if date cannot be parsed, treat as past
+                    past.Add(o);
+                }
+            }
+
+            ViewData["ActiveOrders"] = active;
+            ViewData["PastOrders"] = past;
+            LogOrderActivity($"MyOrders render username={username} active={active.Count} past={past.Count}");
+            return PartialView("_MyOrdersPartial");
+        }
+
+        // Debug endpoint: return user's orders as JSON (active + past)
+        [HttpGet]
+        public IActionResult MyOrdersJson()
+        {
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return Json(new { success = false, message = "Not authenticated" });
+
+            var orders = ReadOrdersSafe();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var userOrders = orders.Where(o => string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase))
+                                   .OrderByDescending(o => o.Date).ThenByDescending(o => o.Hour)
+                                   .ToList();
+
+            var active = new List<OrderModel>();
+            var past = new List<OrderModel>();
+
+            foreach (var o in userOrders)
+            {
+                if (DateOnly.TryParse(o.Date, out var d))
+                {
+                    if (string.Equals(o.Status, "active", StringComparison.OrdinalIgnoreCase) && d >= today)
+                        active.Add(o);
+                    else
+                        past.Add(o);
+                }
+                else
+                {
+                    past.Add(o);
+                }
+            }
+
+            LogOrderActivity($"DEBUG MyOrdersJson user={username} total={userOrders.Count} active={active.Count} past={past.Count}");
+
+            return Json(new { success = true, active, past });
+        }
+
+        // POST: Cancel order (mark status cancelled)
+        [HttpPost]
+        public IActionResult CancelOrder([FromBody] IdDto dto)
+        {
+            if (dto == null) return BadRequest("invalid payload");
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return Unauthorized();
+
+            var ordersPath = GetOrdersPath();
+            lock (_ordersLock)
+            {
+                List<OrderModel> orders = new();
+                if (System.IO.File.Exists(ordersPath))
+                {
+                    try { orders = JsonSerializer.Deserialize<List<OrderModel>>(System.IO.File.ReadAllText(ordersPath, Encoding.UTF8)) ?? new List<OrderModel>(); } catch { orders = new List<OrderModel>(); }
+                }
+
+                var target = orders.FirstOrDefault(o => o.Id == dto.Id);
+                if (target == null) return NotFound();
+                if (!string.Equals(target.Username, username, StringComparison.OrdinalIgnoreCase)) return Forbid();
+
+                target.Status = "cancelled";
+                try { var write = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true }); System.IO.File.WriteAllText(ordersPath, write, Encoding.UTF8); LogOrderActivity($"OK cancelled username={username} id={dto.Id}"); return Ok(new { success = true }); }
+                catch { LogOrderActivity($"ERROR cancel username={username} id={dto.Id}"); return StatusCode(500, "Error al actualizar la orden."); }
+            }
+        }
+
+        // POST: Delete order
+        [HttpPost]
+        public IActionResult DeleteOrder([FromBody] IdDto dto)
+        {
+            if (dto == null) return BadRequest("invalid payload");
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return Unauthorized();
+
+            var ordersPath = GetOrdersPath();
+            lock (_ordersLock)
+            {
+                List<OrderModel> orders = new();
+                if (System.IO.File.Exists(ordersPath))
+                {
+                    try { orders = JsonSerializer.Deserialize<List<OrderModel>>(System.IO.File.ReadAllText(ordersPath, Encoding.UTF8)) ?? new List<OrderModel>(); } catch { orders = new List<OrderModel>(); }
+                }
+
+                var target = orders.FirstOrDefault(o => o.Id == dto.Id);
+                if (target == null) return NotFound();
+                if (!string.Equals(target.Username, username, StringComparison.OrdinalIgnoreCase)) return Forbid();
+
+                orders.RemoveAll(o => o.Id == dto.Id);
+                try { var write = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true }); System.IO.File.WriteAllText(ordersPath, write, Encoding.UTF8); LogOrderActivity($"OK deleted username={username} id={dto.Id}"); return Ok(new { success = true }); }
+                catch { LogOrderActivity($"ERROR delete username={username} id={dto.Id}"); return StatusCode(500, "Error al eliminar la orden."); }
+            }
+        }
+
+        // POST: submit edit (only change hour, persons, notes allowed) - enforce same validations
+        [HttpPost]
+        public IActionResult EditOrderSubmit([FromBody] EditOrderDto dto)
+        {
+            if (dto == null) return BadRequest("invalid payload");
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(dto.Hour) || !System.Text.RegularExpressions.Regex.IsMatch(dto.Hour, "^\\d{2}:00$"))
+                return BadRequest("Hora inválida.");
+
+            var ordersPath = GetOrdersPath();
+            lock (_ordersLock)
+            {
+                List<OrderModel> orders = new();
+                if (System.IO.File.Exists(ordersPath))
+                {
+                    try { orders = JsonSerializer.Deserialize<List<OrderModel>>(System.IO.File.ReadAllText(ordersPath, Encoding.UTF8)) ?? new List<OrderModel>(); } catch { orders = new List<OrderModel>(); }
+                }
+
+                var ord = orders.FirstOrDefault(o => o.Id == dto.Id);
+                if (ord == null) return NotFound();
+                if (!string.Equals(ord.Username, username, StringComparison.OrdinalIgnoreCase)) return Forbid();
+
+                if (!DateOnly.TryParse(ord.Date, out var reservationDate)) return BadRequest("Fecha inválida en la orden.");
+                if (DateOnly.FromDateTime(DateTime.Today) > reservationDate) return BadRequest("No se pueden editar reservaciones pasadas.");
+
+                if (int.TryParse(dto.Hour.Substring(0,2), out var hInt))
+                {
+                    var slotDateTime = new DateTime(reservationDate.Year, reservationDate.Month, reservationDate.Day, hInt, 0, 0);
+                    if (slotDateTime < DateTime.Now) return BadRequest("No puedes mover la reservación a una hora pasada.");
+                    if (reservationDate == DateOnly.FromDateTime(DateTime.Now) && slotDateTime < DateTime.Now.AddHours(2)) return BadRequest("Para reservas del mismo día, la hora debe ser al menos 2 horas después de la hora actual.");
+                }
+
+                var duplicateExact = orders.Any(o => o.Id != dto.Id && string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase)
+                                                     && o.Date == ord.Date && o.Hour == dto.Hour && o.BranchId == ord.BranchId);
+                if (duplicateExact) return BadRequest("Ya existe una reservación idéntica para esa hora.");
+
+                var sameSlotCount = orders.Count(o => o.Date == ord.Date && o.Hour == dto.Hour && o.Id != dto.Id);
+                if (sameSlotCount >= 10) return BadRequest("Lo sentimos, ya se alcanzó el límite de 10 reservaciones para esa hora.");
+
+                // apply changes (only hour, persons, notes)
+                ord.Hour = dto.Hour;
+                ord.Persons = dto.Persons;
+                ord.Notes = dto.Notes;
+
+                try { var write = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true }); System.IO.File.WriteAllText(ordersPath, write, Encoding.UTF8); LogOrderActivity($"OK edited username={username} id={dto.Id} hour={dto.Hour}"); return Ok(new { success = true }); }
+                catch { LogOrderActivity($"ERROR edit username={username} id={dto.Id}"); return StatusCode(500, "Error al guardar cambios."); }
+            }
+        }
+
+        // GET: Edit order (form)
+        [HttpGet]
+        public IActionResult EditOrder(int id)
+        {
+            var username = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(username)) return RedirectToAction("IniciarSesion");
+
+            var orders = ReadOrdersSafe();
+            var order = orders.FirstOrDefault(o => o.Id == id);
+            if (order == null) return NotFound();
+            if (!string.Equals(order.Username, username, StringComparison.OrdinalIgnoreCase)) return Forbid();
+
+            // only allow editing future orders
+            var todayStr = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
+            if (String.Compare(order.Date, todayStr) < 0) return BadRequest("No se pueden editar reservaciones pasadas.");
+
+            ViewData["Branches"] = _branches;
+            return PartialView("_EditOrderPartial", order);
+        }
     }
 
     public class BranchModel
@@ -661,17 +920,16 @@ namespace TuProyecto.Controllers
         public string Name { get; set; } = string.Empty;
     }
 
-    public class OrderModel
+    public class IdDto
     {
         public int Id { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string? DisplayName { get; set; }
-        public int BranchId { get; set; }
-        public string BranchName { get; set; } = string.Empty;
-        public string Date { get; set; } = string.Empty; // yyyy-MM-dd
-        public string Hour { get; set; } = string.Empty; // HH:00
+    }
+
+    public class EditOrderDto
+    {
+        public int Id { get; set; }
+        public string Hour { get; set; } = string.Empty;
         public int Persons { get; set; }
-        public string? Notes { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string Notes { get; set; } = string.Empty;
     }
 }
