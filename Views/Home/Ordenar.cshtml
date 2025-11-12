@@ -32,7 +32,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Fecha</label>
-                            <input type="date" name="date" class="form-control" required id="orderDate" disabled />
+                            <input type="date" name="date" class="form-control" required id="orderDate" placeholder="dd/mm/aaaa" disabled />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Hora</label>
@@ -95,12 +95,22 @@
             const personsSelect = document.getElementById('personsSelect');
             const submitBtn = document.getElementById('submitBtn');
 
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
             const minDate = yyyy + '-' + mm + '-' + dd;
-            if (dateInput) dateInput.setAttribute('min', minDate);
+            // set max to 15 days ahead
+            const max = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 15);
+            const maxY = max.getFullYear();
+            const maxM = String(max.getMonth() + 1).padStart(2, '0');
+            const maxD = String(max.getDate()).padStart(2, '0');
+            const maxDate = maxY + '-' + maxM + '-' + maxD;
+
+            if (dateInput) {
+                dateInput.setAttribute('min', minDate);
+                dateInput.setAttribute('max', maxDate);
+            }
 
             async function fetchAvailability(date) {
                 const branchId = branchSelect.value || 0;
@@ -152,9 +162,9 @@
                 hourSelect.innerHTML = '<option value="">Selecciona hora</option>';
                 if (!avail) { hourSelect.disabled = true; return; }
 
-                const now = new Date();
+                const nowLocal = new Date();
                 // compute earliest allowed hour for same-day reservations: at least 2 hours from now
-                const earliestAllowedHour = now.getHours() + 2;
+                const earliestAllowedHour = nowLocal.getHours() + 2;
 
                 for (const optHour of ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00']){
                     const remaining = avail[optHour] ?? 0;
@@ -165,7 +175,7 @@
 
                     // if date is today, disable hours that are less than earliestAllowedHour
                     const selDate = new Date(date + 'T00:00:00');
-                    if (selDate.toDateString() === now.toDateString()){
+                    if (selDate.toDateString() === nowLocal.toDateString()){
                         const h = parseInt(optHour.split(':')[0],10);
                         if (h < earliestAllowedHour) opt.disabled = true;
                     }
@@ -191,15 +201,18 @@
             // initialize: disable downstream controls
             resetDate(); resetHour(); resetPersons(); resetSubmit();
 
-            // Show styled modal instead of alert when success
+            // Show styled modal instead of alert when success - format date dd/mm/yyyy and hour HH:00
             var success = '@(TempData["OrderSuccess"] ?? "")';
             var info = '@(TempData["OrderInfo"] ?? "")';
             if (success) {
                 try {
                     var parsed = JSON.parse(info.replace(/&quot;/g, '"'));
+                    // parsed.Date is yyyy-MM-dd -> convert to dd/mm/yyyy
+                    var d = parsed.Date.split('-');
+                    var dispDate = d[2] + '/' + d[1] + '/' + d[0];
                     var message = '<strong>' + success + '</strong><br/><br/>' +
                         '<strong>Sucursal:</strong> ' + parsed.BranchName + '<br/>' +
-                        '<strong>Fecha:</strong> ' + parsed.Date + ' ' + parsed.Hour + '<br/>' +
+                        '<strong>Fecha:</strong> ' + dispDate + ' ' + parsed.Hour + '<br/>' +
                         '<strong>Personas:</strong> ' + parsed.Persons;
                     document.getElementById('orderSuccessText').innerHTML = message;
                     var modal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));

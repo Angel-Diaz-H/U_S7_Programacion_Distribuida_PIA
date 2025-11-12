@@ -3,12 +3,12 @@
     "Id": 1,
     "Username": "angel",
     "DisplayName": "Angel Diaz",
-    "BranchId": 1,
-    "BranchName": "Bowlly\u0027s San Pedro",
+    "BranchId": 3,
+    "BranchName": "Bowlly\u0027s Zapopan",
     "Date": "2025-11-12",
     "Hour": "13:00",
-    "Persons": 1,
+    "Persons": 20,
     "Notes": "",
-    "CreatedAt": "2025-11-12T17:48:46.0191723Z"
+    "CreatedAt": "2025-11-12T17:56:26.9215548Z"
   }
 ]

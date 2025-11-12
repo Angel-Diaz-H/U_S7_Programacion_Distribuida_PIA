@@ -281,11 +281,18 @@ namespace TuProyecto.Controllers
                 return RedirectToAction("Ordenar");
             }
 
-            // server-side check: date must not be before today
             var today = DateOnly.FromDateTime(DateTime.Today);
             if (reservationDate < today)
             {
                 TempData["OrderError"] = "No puedes reservar en una fecha anterior al día de hoy.";
+                return RedirectToAction("Ordenar");
+            }
+
+            // NEW: max 15 days ahead
+            var maxAllowed = today.AddDays(15);
+            if (reservationDate > maxAllowed)
+            {
+                TempData["OrderError"] = "La fecha máxima para reservar es dentro de 15 días desde hoy.";
                 return RedirectToAction("Ordenar");
             }
 
@@ -304,6 +311,18 @@ namespace TuProyecto.Controllers
                 {
                     TempData["OrderError"] = "No puedes reservar en una fecha u hora pasadas.";
                     return RedirectToAction("Ordenar");
+                }
+
+                // NEW: require same-day reservations to be at least 2 hours ahead
+                var now = DateTime.Now;
+                if (reservationDate == DateOnly.FromDateTime(now))
+                {
+                    var earliestHour = now.AddHours(2).Hour;
+                    if (hourInt < earliestHour)
+                    {
+                        TempData["OrderError"] = "Para reservas del mismo día, la hora debe ser al menos 2 horas después de la hora actual.";
+                        return RedirectToAction("Ordenar");
+                    }
                 }
             }
 
