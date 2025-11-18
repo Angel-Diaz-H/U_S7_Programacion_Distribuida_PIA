@@ -185,6 +185,15 @@ namespace TuProyecto.Controllers
                         return false;
                     }
 
+                    // check daily persons capacity (max 200)
+                    var totalPersonsForDate = orders.Where(o => o.Date == reservationDateStr).Sum(o => o.Persons);
+                    if (totalPersonsForDate + newOrder.Persons > 200)
+                    {
+                        error = "No hay capacidad suficiente para esa fecha (límite diario alcanzado).";
+                        LogOrderActivity($"REJECT dailyCapacity date={reservationDateStr} totalPersons={totalPersonsForDate} requested={newOrder.Persons}");
+                        return false;
+                    }
+
                     // check slot capacity
                     var sameSlotCount = orders.Count(o => o.Date == reservationDateStr && o.Hour == newOrder.Hour);
                     if (sameSlotCount >= 10)
@@ -696,7 +705,11 @@ namespace TuProyecto.Controllers
                 result[hour] = remaining;
             }
 
-            return Json(new { success = true, availability = result });
+            // compute remaining persons capacity for the full day (max 200)
+            var totalPersonsForDate = orders.Where(o => o.Date == date).Sum(o => o.Persons);
+            var dateRemaining = Math.Max(0, 200 - totalPersonsForDate);
+
+            return Json(new { success = true, availability = result, dateRemaining });
         }
 
         // Generic error page used by exception handler
@@ -881,6 +894,11 @@ namespace TuProyecto.Controllers
 
                 var sameSlotCount = orders.Count(o => o.Date == ord.Date && o.Hour == dto.Hour && o.Id != dto.Id);
                 if (sameSlotCount >= 10) return BadRequest("Lo sentimos, ya se alcanzó el límite de 10 reservaciones para esa hora.");
+
+                // Comprobar la capacidad diaria: suma de personas para la fecha, <= 200
+                var totalPersonsExcludingThis = orders.Where(o => o.Date == ord.Date && o.Id != ord.Id).Sum(o => o.Persons);
+                if (totalPersonsExcludingThis + dto.Persons > 200)
+                    return BadRequest("No hay capacidad suficiente para la cantidad de personas en esa fecha.");
 
                 // apply changes (only hour, persons, notes)
                 ord.Hour = dto.Hour;

@@ -119,7 +119,7 @@
                 const res = await fetch(`/Home/GetAvailability?date=${date}&branchId=${branchId}`);
                 if (!res.ok) return null;
                 const data = await res.json();
-                return data.success ? data.availability : null;
+                return data.success ? data : null;
             }
 
             function resetDate() {
@@ -160,16 +160,25 @@
                 const date = dateInput.value;
                 if (!branchSelect.value || !date) return;
 
-                const avail = await fetchAvailability(date);
+                const payload = await fetchAvailability(date);
+                if (!payload) { hourSelect.disabled = true; return; }
+
+                // if date capacity exhausted, show message and clear date
+                const dateRemaining = payload.dateRemaining ?? 0;
+                if (dateRemaining <= 0) {
+                    alert('Lo sentimos, no hay capacidad para esa fecha (límite diario alcanzado). Por favor elige otra fecha.');
+                    dateInput.value = '';
+                    return;
+                }
+
                 hourSelect.innerHTML = '<option value="">Selecciona hora</option>';
-                if (!avail) { hourSelect.disabled = true; return; }
 
                 const nowLocal = new Date();
                 // compute earliest allowed hour for same-day reservations: at least 2 hours from now (hour-based)
                 const earliestAllowedHour = nowLocal.getHours() + 2;
 
                 for (const optHour of ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00']){
-                    const remaining = avail[optHour] ?? 0;
+                    const remaining = payload.availability[optHour] ?? 0;
                     const opt = document.createElement('option');
                     opt.value = optHour;
                     opt.text = optHour + (remaining >= 0 ? (' — ' + remaining + ' disponibles') : '');
@@ -186,18 +195,34 @@
                 }
 
                 hourSelect.disabled = false;
+
+                // enable persons selector now but limit choices client-side: show only up to min(20, dateRemaining)
+                personsSelect.disabled = false;
+                // adjust persons options to reflect remaining capacity
+                const maxPersonsAllowed = Math.min(20, dateRemaining);
+                personsSelect.innerHTML = '';
+                for (let i=1;i<=20;i++){
+                    const op = document.createElement('option');
+                    op.value = String(i);
+                    op.text = String(i);
+                    if (i > maxPersonsAllowed) op.disabled = true;
+                    personsSelect.appendChild(op);
+                }
+
+                // final enable submit only when hour selected and persons available
+                submitBtn.disabled = true;
             });
 
-            // when hour selected -> enable persons
+            // when hour selected -> enable persons (already enabled) and allow submit if both selected
             hourSelect.addEventListener('change', function() {
                 personsSelect.disabled = !hourSelect.value;
-                // enable submit if persons also selected
-                submitBtn.disabled = !(hourSelect.value && personsSelect.value);
+                // enable submit only if hour + persons (and persons option not disabled)
+                submitBtn.disabled = !(hourSelect.value && personsSelect.value && !personsSelect.options[personsSelect.selectedIndex].disabled);
             });
 
-            // when persons selected -> enable submit if hour selected
+            // when persons selected -> enable submit if hour selected and persons allowed
             personsSelect.addEventListener('change', function() {
-                submitBtn.disabled = !(hourSelect.value && personsSelect.value);
+                submitBtn.disabled = !(hourSelect.value && personsSelect.value && !personsSelect.options[personsSelect.selectedIndex].disabled);
             });
 
             // initialize: disable downstream controls

@@ -19,7 +19,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Fecha</label>
-                <input class="form-control" value="@o.Date" readonly style="background:#f6f6f6; color:#4b5563;" />
+                <input class="form-control" id="editOrderDate" value="@o.Date" readonly style="background:#f6f6f6; color:#4b5563;" />
             </div>
             <div class="mb-3">
                 <label class="form-label">Hora</label>
@@ -36,7 +36,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Personas</label>
-                <select name="persons" class="form-select">
+                <select name="persons" id="editPersonsSelect" class="form-select">
                     @{
                         for(int i=1;i<=20;i++)
                         {
@@ -45,6 +45,7 @@
                         }
                     }
                 </select>
+                <div id="editCapacityNote" class="form-text text-muted mt-1" style="display:none;"></div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Notas</label>
@@ -61,6 +62,44 @@
 </div>
 
 <script>
+    // when modal is shown the DOM exists; adjust persons options based on day's remaining capacity
+    (async function(){
+        try{
+            const date = '@o.Date';
+            const branchId = '@o.BranchId';
+            const currentPersons = parseInt('@o.Persons', 10) || 1;
+            const res = await fetch(`/Home/GetAvailability?date=${date}&branchId=${branchId}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            if (!data || !data.success) return;
+            const dateRemaining = parseInt(data.dateRemaining || 0, 10);
+            const availableIncludingCurrent = Math.min(20, dateRemaining + currentPersons);
+
+            const select = document.getElementById('editPersonsSelect');
+            select.innerHTML = '';
+            for (let i=1;i<=20;i++){
+                const op = document.createElement('option');
+                op.value = String(i);
+                op.text = String(i);
+                if (i > availableIncludingCurrent) op.disabled = true;
+                if (i === currentPersons) op.selected = true;
+                select.appendChild(op);
+            }
+
+            const note = document.getElementById('editCapacityNote');
+            if (dateRemaining <= 0) {
+                note.style.display = 'block';
+                note.innerText = 'Capacidad diaria alcanzada para esta fecha. Solo puedes mantener o reducir las personas.';
+            } else if (dateRemaining < 20) {
+                note.style.display = 'block';
+                note.innerText = `Quedan ${dateRemaining} espacios disponibles para esta fecha.`;
+            }
+        } catch (e) {
+            // ignore failures, keep default options
+            console.error('Failed to adjust edit persons options', e);
+        }
+    })();
+
     document.getElementById('saveEditBtn').addEventListener('click', async function(){
         const form = document.getElementById('editOrderForm');
         const data = new FormData(form);
