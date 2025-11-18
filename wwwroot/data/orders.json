@@ -1,18 +1,5 @@
 ﻿[
   {
-    "Id": 7,
-    "Username": "rau",
-    "DisplayName": "Ra\u00FAl P\u00E9rez",
-    "BranchId": 1,
-    "BranchName": "Bowlly\u0027s San Pedro",
-    "Date": "2025-11-14",
-    "Hour": "18:00",
-    "Persons": 12,
-    "Notes": "",
-    "CreatedAt": "2025-11-12T21:59:25.8082443Z",
-    "Status": "active"
-  },
-  {
     "Id": 8,
     "Username": "rau",
     "DisplayName": "Ra\u00FAl P\u00E9rez",
@@ -34,8 +21,21 @@
     "Date": "2025-11-15",
     "Hour": "19:00",
     "Persons": 3,
-    "Notes": "",
+    "Notes": "holsa",
     "CreatedAt": "2025-11-12T22:01:30.1537287Z",
+    "Status": "active"
+  },
+  {
+    "Id": 10,
+    "Username": "rau",
+    "DisplayName": "Ra\u00FAl Dami\u00E1n P\u00E9rez",
+    "BranchId": 1,
+    "BranchName": "Bowlly\u0027s San Pedro",
+    "Date": "2025-11-19",
+    "Hour": "14:00",
+    "Persons": 19,
+    "Notes": "",
+    "CreatedAt": "2025-11-13T00:59:09.6849911Z",
     "Status": "active"
   }
 ]

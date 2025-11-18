@@ -661,7 +661,7 @@ namespace TuProyecto.Controllers
             HttpContext.Session.SetString("LoggedInDisplayName", user.DisplayName ?? user.Username);
 
             TempData["EditSuccess"] = "Datos actualizados correctamente.";
-            return RedirectToAction("Mi Cuenta");
+            return RedirectToAction("MiCuenta");
         }
 
         // Logout demo
